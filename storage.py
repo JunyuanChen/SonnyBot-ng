@@ -70,7 +70,13 @@ class User:
             json.dump(self._data, f, indent=4)
 
     def destroy(self):
-        os.remove(self._filename)
+        try:
+            os.remove(self._filename)
+            commit(f"Delete user {self.id}")
+            logging.info(f"User {self.id} destroyed")
+        except StorageError as e:
+            logging.error(f"Failed to destroy user {user.id}")
+            raise StorageError(f"Failed to delete user {user.id}") from e
         del self._LOADED[self.id]
 
     @classmethod
