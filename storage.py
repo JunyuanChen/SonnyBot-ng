@@ -118,6 +118,24 @@ class User:
         except KeyError:
             return cls.create(id)
 
+    @classmethod
+    def all(cls):
+        result = []
+        for data_file in os.listdir(STORAGE_DIR):
+            filename = f"{STORAGE_DIR}/{data_file}"
+            if data_file.endswith(".json") and os.path.isfile(filename):
+                try:
+                    id = int(data_file[:-5])
+                    user = cls.load(id)
+                    result.append(user)
+                except ValueError as e:
+                    logging.warn(f"Invalid data file ignored: {data_file}")
+                except KeyError:
+                    # data file corrupted
+                    # already logged by cls.load()
+                    pass
+        return result
+
 
 def commit(commit_message):
     try:
