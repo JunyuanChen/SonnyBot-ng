@@ -124,4 +124,18 @@ def commit(commit_message):
     except subprocess.CalledProcessError as e:
         logging.error(f"Git operation failed with {e.returncode}: {e.cmd}")
         logging.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
-        raise StorageError(f"Failed to save - see logs for details") from e
+        raise StorageError("Failed to save - see logs for details") from e
+
+
+def sync():
+    try:
+        subprocess.run(["git", "reset", "--hard", "HEAD"],
+                       cwd=STORAGE_DIR, check=True)
+        subprocess.run(["git", "pull", REMOTE_NAME],
+                       cwd=STORAGE_DIR, check=True)
+        logging.info("Synchronized storage from remote")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Git operation failed with {e.returncode}: {e.cmd}")
+        logging.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
+        logging.error("Failed to synchronize with remote")
+        raise StorageError("Failed to sync - see logs for details") from e
