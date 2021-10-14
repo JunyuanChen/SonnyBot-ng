@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import json
 import subprocess
 
@@ -53,6 +54,7 @@ class User:
     def __init__(self, id, data):
         self._id = id
         self._data = data
+        self._filename = f"{STORAGE_DIR}/{id}.json"
 
     @property
     def id(self):
@@ -64,9 +66,12 @@ class User:
     dmoj_username = field("dmojUsername")
 
     def save(self):
-        filename = f"{STORAGE_DIR}/{self.id}.json"
-        with open(filename, "w", encoding="utf-8") as f:
+        with open(self._filename, "w", encoding="utf-8") as f:
             json.dump(self._data, f, indent=4)
+
+    def destroy(self):
+        os.remove(self._filename)
+        del self._LOADED[self.id]
 
     @classmethod
     def load(cls, id):
