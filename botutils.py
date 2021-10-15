@@ -57,7 +57,11 @@ def command(client):
         async def decorated(ctx, user_id, *args):
             args_str = " ".join(map(str, args))
             logging.debug(f"[Command] {f.__name__} {user_id} {args_str}")
-            return await f(ctx, extract_id(user_id), *args)
+            extracted = extract_id(user_id)
+            if extracted == -1:
+                await ctx.send(f"Invalid User ID {user_id}!")
+            else:
+                return await f(ctx, extracted, *args)
 
         return decorated
     return decorator
