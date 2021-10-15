@@ -155,4 +155,16 @@ async def resetUserStat(ctx, user_id):
             await ctx.send(str(e))
 
 
+@bot.command()
+@botutils.require_admin
+async def syncData(ctx):
+    logging.debug("[Command] syncData")
+    with STORAGE_LOCK:
+        try:
+            storage.sync()
+            await ctx.send(f"Successfully synced to remote!")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
+
+
 bot.run(os.environ["BotToken"])
