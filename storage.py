@@ -68,6 +68,7 @@ class User:
     dmoj_username = field("dmojUsername")
 
     def save(self):
+        self._snap = copy.deepcopy(self._data)
         with open(self._filename, "w", encoding="utf-8") as f:
             json.dump(self._data, f, indent=4)
 
