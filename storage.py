@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import copy
 import json
 import subprocess
 
@@ -53,7 +54,8 @@ class User:
 
     def __init__(self, id, data):
         self._id = id
-        self._data = data
+        self._snap = data
+        self._data = copy.deepcopy(data)
         self._filename = f"{STORAGE_DIR}/{id}.json"
 
     @property
@@ -74,10 +76,10 @@ class User:
             os.remove(self._filename)
             commit(f"Delete user {self.id}")
             logging.info(f"User {self.id} destroyed")
+            del self._LOADED[self.id]
         except StorageError as e:
             logging.error(f"Failed to destroy user {user.id}")
             raise StorageError(f"Failed to delete user {user.id}") from e
-        del self._LOADED[self.id]
 
     @classmethod
     def load(cls, id):
@@ -86,7 +88,9 @@ class User:
             filename = f"{STORAGE_DIR}/{id}.json"
             try:
                 with open(filename, "r", encoding="utf-8") as f:
-                    cls._LOADED[id] = User(id, json.load(f))
+                    user = User(id, json.load(f))
+                    cls._LOADED[id] = user
+                    return user
             except FileNotFoundError as e:
                 raise KeyError(id) from e
             except json.JSONDecodeError as e:
@@ -94,7 +98,10 @@ class User:
                 logging.warn(f"Ignoring existing data for user {id}")
                 logging.debug(f"JSONDecodeError: {e}")
                 raise KeyError(id) from e
-        return cls._LOADED[id]
+
+        user = cls._LOADED[id]
+        user._data = copy.deepcopy(user._snap)
+        return user
 
     @classmethod
     def create(cls, id):
