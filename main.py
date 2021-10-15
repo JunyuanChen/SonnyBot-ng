@@ -8,6 +8,8 @@ import logging
 import botutils
 import storage
 
+from concerns import calc_exp
+
 
 storage.sync()  # Pull remote change
 
@@ -32,6 +34,35 @@ async def removeUser(ctx, user_id):
             await ctx.send(f"User <@{user_id}> has been deleted")
         except KeyError:
             logging.debug(f"removeUser: User {user_id} not found")
+            await ctx.send(f"User <@{user_id}> not found!")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
+
+
+@botutils.admin_command(bot)
+async def changeEXP(ctx, user_id, amount):
+    with STORAGE_LOCK:
+        try:
+            amount = int(amount)
+            user = storage.User.load(user_id)
+            logging.debug(f"changeEXP: Old level: {user.level}")
+            logging.debug(f"changeEXP: Old EXP: {user.exp}")
+            user.level, user.exp = calc_exp.recalc_level_and_exp(
+                user.level, user.exp, amount)
+            assert user.level > -1
+            logging.debug(f"changeEXP: New level: {user.level}")
+            logging.debug(f"changeEXP: New EXP: {user.exp}")
+            user.save()
+            storage.commit(f"Change EXP for user {user_id}: {amount}")
+            await ctx.send(f"<@{user_id}>'s EXP has been updated by {amount}!")
+        except ValueError:
+            logging.debug(f"changeEXP: Bad amount: {amount}")
+            await ctx.send("Amount {amount} must be an integer!")
+        except AssertionError:
+            logging.debug("changeEXP: Not enough EXP")
+            await ctx.send(f"<@{user_id}> does not have enough EXP!")
+        except KeyError:
+            logging.debug(f"changeEXP: User {user_id} not found")
             await ctx.send(f"User <@{user_id}> not found!")
         except storage.StorageError as e:
             await ctx.send(str(e))
@@ -117,6 +148,9 @@ async def resetUserStat(ctx, user_id):
             storage.commit(f"Reset stat for user {user_id}")
             await ctx.send(f"<@{user_id}>'s stats are reset! "
                            f"(CCC progress not included)")
+        except KeyError:
+            logging.debug(f"resetUserStat: User {user_id} not found")
+            await ctx.send(f"User <@{user_id}> not found!")
         except storage.StorageError as e:
             await ctx.send(str(e))
 
