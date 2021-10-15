@@ -56,7 +56,7 @@ async def changeCoins(ctx, user_id, amount):
             await ctx.send("Amount {amount} must be an integer!")
         except AssertionError:
             logging.debug("changeCoins: Not enough coins")
-            await ctx.send("<@{user_id} does not have enough coins!")
+            await ctx.send(f"<@{user_id} does not have enough coins!")
         except KeyError:
             logging.debug(f"changeCoins: User {user_id} not found")
             await ctx.send(f"User <@{user_id}> not found!")
@@ -90,7 +90,7 @@ async def transactCoins(ctx, user_id, amount):
                            f"{amount} to <@{receiver.id}>!")
         except ValueError:
             logging.debug(f"transactCoins: Bad amount: {amount}")
-            await ctx.send("Amount {amount} must be an integer!")
+            await ctx.send(f"Amount {amount} must be an integer!")
         except AssertionError:
             if amount <= 0:
                 logging.debug("transactCoins: Negative or zero count")
