@@ -40,6 +40,7 @@ async def removeUser(ctx, user_id):
 async def changeCoins(ctx, user_id, amount):
     with STORAGE_LOCK:
         try:
+            amount = int(amount)
             user = storage.User.load(user_id)
             logging.debug(f"changeCoins: Old coins: {user.coins}")
             user.coins += amount
@@ -49,6 +50,9 @@ async def changeCoins(ctx, user_id, amount):
             storage.commit(f"Change coins for user {user_id}: {amount}")
             await ctx.send(f"<@{user_id}>'s coin count has been "
                            f"updated by {amount} coin(s)!")
+        except ValueError:
+            logging.debug(f"changeCoins: Bad amount: {amount}")
+            await ctx.send("Amount {amount} must be an integer!")
         except AssertionError:
             logging.debug("changeCoins: Not enough coins")
             await ctx.send("<@{user_id} does not have enough coins!")
