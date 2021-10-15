@@ -157,12 +157,21 @@ def commit(commit_message):
 
 
 def sync():
+    # Flush lazily committed data first
     try:
-        subprocess.run(["git", "reset", "--hard", "HEAD"],
+        commit("Flush lazily committed data")
+    except StorageError:
+        # Nothing to commit, no problem.
+        pass
+
+    try:
+        subprocess.run(["git", "reset", "--hard", "HEAD~1"],
                        cwd=STORAGE_DIR, check=True)
         subprocess.run(["git", "pull", REMOTE_NAME],
                        cwd=STORAGE_DIR, check=True)
         logging.info("Synchronized storage from remote")
+        User._LOADED = {}
+        logging.info("Cleared User cache")
     except subprocess.CalledProcessError as e:
         logging.error(f"Git operation failed with {e.returncode}: {e.cmd}")
         logging.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
