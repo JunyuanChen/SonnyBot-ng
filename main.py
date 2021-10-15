@@ -8,7 +8,10 @@ import logging
 import botutils
 import storage
 
-from concerns import calc_exp
+from concerns import (
+    calc_exp,
+    calc_coins
+)
 
 
 storage.sync()  # Pull remote change
@@ -47,17 +50,29 @@ async def changeEXP(ctx, user_id, amount):
             user = storage.User.load(user_id)
             logging.debug(f"changeEXP: Old level: {user.level}")
             logging.debug(f"changeEXP: Old EXP: {user.exp}")
+            old_level = user.level
             user.level, user.exp = calc_exp.recalc_level_and_exp(
                 user.level, user.exp, amount)
             assert user.level > -1
             logging.debug(f"changeEXP: New level: {user.level}")
             logging.debug(f"changeEXP: New EXP: {user.exp}")
+            if user.level > old_level:
+                coins = calc_coins.level_up_award(old_level, user.level)
+                user.coins += coins
+                await ctx.send(f"<@{user_id}> upgraded to Lvl. {user.level} "
+                               f"and was awarded {coins} coins!")
+            elif user.level < old_level:
+                coins = calc_coins.level_up_award(user.level, old_level)
+                coins = min(coins, user.coins)
+                user.coins -= coins
+                await ctx.send(f"<@{user_id}> downgraded to Lvl. "
+                               f"{user.level} and lost {coins} coins!")
             user.save()
             storage.commit(f"Change EXP for user {user_id}: {amount}")
             await ctx.send(f"<@{user_id}>'s EXP has been updated by {amount}!")
         except ValueError:
             logging.debug(f"changeEXP: Bad amount: {amount}")
-            await ctx.send("Amount {amount} must be an integer!")
+            await ctx.send(f"Amount {amount} must be an integer!")
         except AssertionError:
             logging.debug("changeEXP: Not enough EXP")
             await ctx.send(f"<@{user_id}> does not have enough EXP!")
@@ -84,7 +99,7 @@ async def changeCoins(ctx, user_id, amount):
                            f"updated by {amount} coin(s)!")
         except ValueError:
             logging.debug(f"changeCoins: Bad amount: {amount}")
-            await ctx.send("Amount {amount} must be an integer!")
+            await ctx.send(f"Amount {amount} must be an integer!")
         except AssertionError:
             logging.debug("changeCoins: Not enough coins")
             await ctx.send(f"<@{user_id} does not have enough coins!")
