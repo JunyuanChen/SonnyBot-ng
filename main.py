@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import threading
 
 import logging
@@ -118,3 +119,6 @@ async def resetUserStat(ctx, user_id):
                            f"(CCC progress not included)")
         except storage.StorageError as e:
             await ctx.send(str(e))
+
+
+bot.run(os.environ["BotToken"])
