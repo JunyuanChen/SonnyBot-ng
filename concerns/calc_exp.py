@@ -21,9 +21,11 @@ def recalc_level_and_exp(level, exp, exp_change):
 
     if exp >= 0:
         required = 1000 * (level + 1)
-        if exp < required:
-            return level, exp
-        return level + 1, exp - required
+        while exp >= required:
+            level += 1
+            exp -= required
+            required += 1000
+        return level, exp
 
     while exp < 0 and level > -1:
         exp += 1000 * level
