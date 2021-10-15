@@ -102,3 +102,19 @@ async def transactCoins(ctx, user_id, amount):
             await ctx.send(f"User <@{user_id}> not found!")
         except storage.StorageError as e:
             await ctx.send(str(e))
+
+
+@botutils.admin_command(bot)
+async def resetUserStat(ctx, user_id):
+    with STORAGE_LOCK:
+        try:
+            user = storage.User.load(user_id)
+            user.exp = 0
+            user.level = 0
+            user.coins = 0
+            user.save()
+            storage.commit(f"Reset stat for user {user_id}")
+            await ctx.send(f"<@{user_id}>'s stats are reset! "
+                           f"(CCC progress not included)")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
