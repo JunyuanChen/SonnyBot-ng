@@ -15,12 +15,17 @@ def level_to_exp(level):
     return 500 * level * (1 + level)
 
 
-def new_level_and_exp(old_level, old_exp, added_exp):
-    """
-    Recalculate level and EXP after adding added_exp.
-    """
-    exp_at_level = old_exp + added_exp
-    exp_required = 1000 * (old_level + 1)
-    if exp_at_level < exp_required:
-        return old_level, exp_at_level
-    return old_level + 1, exp_at_level - exp_required
+def recalc_level_and_exp(level, exp, exp_change):
+    """ Recalculate level and EXP after exp_change. """
+    exp += exp_change
+
+    if exp >= 0:
+        required = 1000 * (level + 1)
+        if exp < required:
+            return level, exp
+        return level + 1, exp - required
+
+    while exp < 0 and level > -1:
+        exp += 1000 * level
+        level -= 1
+    return level, exp
