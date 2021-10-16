@@ -5,7 +5,7 @@ import copy
 import json
 import subprocess
 
-import logging
+import logger
 
 
 STORAGE_DIR = "data"
@@ -76,10 +76,10 @@ class User:
         try:
             os.remove(self._filename)
             commit(f"Delete user {self.id}")
-            logging.info(f"User {self.id} destroyed")
+            logger.info(f"User {self.id} destroyed")
             del self._LOADED[self.id]
         except StorageError as e:
-            logging.error(f"Failed to destroy user {user.id}")
+            logger.error(f"Failed to destroy user {user.id}")
             raise StorageError(f"Failed to delete user {user.id}") from e
 
     @classmethod
@@ -95,9 +95,9 @@ class User:
             except FileNotFoundError as e:
                 raise KeyError(id) from e
             except json.JSONDecodeError as e:
-                logging.warn(f"Failed to load user {id}: Corrupted data")
-                logging.warn(f"Ignoring existing data for user {id}")
-                logging.debug(f"JSONDecodeError: {e}")
+                logger.warn(f"Failed to load user {id}: Corrupted data")
+                logger.warn(f"Ignoring existing data for user {id}")
+                logger.debug(f"JSONDecodeError: {e}")
                 raise KeyError(id) from e
 
         user = cls._LOADED[id]
@@ -117,11 +117,11 @@ class User:
         try:
             user.save()
             commit(f"Create new user {id}")
-            logging.info(f"New user {id} created")
+            logger.info(f"New user {id} created")
             cls._LOADED[id] = user
             return user
         except StorageError as e:
-            logging.error(f"Failed to create user {id}")
+            logger.error(f"Failed to create user {id}")
             raise StorageError(f"Failed to create user {id}") from e
 
     @classmethod
@@ -143,7 +143,7 @@ class User:
                     user = cls.load(id)
                     result.append(user)
                 except ValueError as e:
-                    logging.warn(f"Invalid data file ignored: {data_file}")
+                    logger.warn(f"Invalid data file ignored: {data_file}")
                 except KeyError:
                     # data file corrupted
                     # already logged by cls.load()
@@ -159,8 +159,8 @@ def commit(commit_message):
         subprocess.run(["git", "push", REMOTE_NAME],
                        cwd=STORAGE_DIR, check=True)
     except subprocess.CalledProcessError as e:
-        logging.error(f"Git operation failed with {e.returncode}: {e.cmd}")
-        logging.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
+        logger.error(f"Git operation failed with {e.returncode}: {e.cmd}")
+        logger.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
         raise StorageError("Failed to save - see logs for details") from e
 
 
@@ -177,11 +177,11 @@ def sync():
                        cwd=STORAGE_DIR, check=True)
         subprocess.run(["git", "pull", REMOTE_NAME],
                        cwd=STORAGE_DIR, check=True)
-        logging.info("Synchronized storage from remote")
+        logger.info("Synchronized storage from remote")
         User._LOADED = {}
-        logging.info("Cleared User cache")
+        logger.info("Cleared User cache")
     except subprocess.CalledProcessError as e:
-        logging.error(f"Git operation failed with {e.returncode}: {e.cmd}")
-        logging.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
-        logging.error("Failed to synchronize with remote")
+        logger.error(f"Git operation failed with {e.returncode}: {e.cmd}")
+        logger.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
+        logger.error("Failed to synchronize with remote")
         raise StorageError("Failed to sync - see logs for details") from e

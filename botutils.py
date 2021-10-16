@@ -23,7 +23,7 @@ these details away from the rest of the program.
 """
 
 import discord
-import logging
+import logger
 
 
 def setup_bot():
@@ -43,8 +43,8 @@ def extract_id(user_id):
         # "<@!...>" where "..." is what we want
         return int(user_id[3:-1])
     except ValueError:
-        logging.warn(f"Malformed UserID string: {user_id}")
-        logging.warn(f"Returning ID -1 as fallback")
+        logger.warn(f"Malformed UserID string: {user_id}")
+        logger.warn(f"Returning ID -1 as fallback")
         return -1
 
 
@@ -56,7 +56,7 @@ def command(client):
         @client.command()
         async def decorated(ctx, user_id, *args):
             args_str = " ".join(map(str, args))
-            logging.debug(f"[Command] {f.__name__} {user_id} {args_str}")
+            logger.debug(f"[Command] {f.__name__} {user_id} {args_str}")
             extracted = extract_id(user_id)
             if extracted == -1:
                 await ctx.send(f"Invalid User ID {user_id}!")
@@ -73,7 +73,7 @@ def admin_command(client):
         @require_admin
         async def decorated(ctx, user_id, *args):
             args_str = " ".join(map(str, args))
-            logging.debug(f"[Command] {f.__name__} {user_id} {args_str}")
+            logger.debug(f"[Command] {f.__name__} {user_id} {args_str}")
             extracted = extract_id(user_id)
             if extracted == -1:
                 await ctx.send(f"Invalid User ID {user_id}!")
