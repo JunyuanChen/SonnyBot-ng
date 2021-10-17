@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import io
 import os
 import threading
 
@@ -9,6 +10,7 @@ import botutils
 import storage
 
 from concerns import (
+    user_stat,
     calc_exp,
     calc_coins
 )
@@ -27,6 +29,31 @@ bot = botutils.setup_bot()
 
 # Storage access must be serialized
 STORAGE_LOCK = threading.lock()
+
+
+@botutils.command(bot)
+async def stat(ctx, user_id=None):
+    if user_id is None:
+        user_id = ctx.author.id
+
+    member = ctx.guild.get_member(user_id)
+    avatar = io.BytesIO(await member.avatar_url_as(size=128).read())
+
+    with STORAGE_LOCK:
+        try:
+            user = storage.User.load(user_id)
+            users = storage.User.all()
+            rank = sorted(users, key=lambda u: -u.exp).index(user)
+            stat_img = user_stat.draw_stat(
+                avatar, member.name, user.level, rank,
+                user.exp, user.coins, user.msg_count
+            )
+            await ctx.send(file=botutils.File(stat_img))
+            os.unlink(stat_img)
+        except KeyError:
+            await ctx.send(f"User <@{user_id}> not found!")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
 
 
 @botutils.admin_command(bot)
