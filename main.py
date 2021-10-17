@@ -45,7 +45,7 @@ async def stat(ctx, user_id=None):
             users = storage.User.all()
             rank = calc_exp.rank_users(users).index(user)
             stat_img = user_stat.draw_stat(
-                avatar, member.name, user.level, rank,
+                avatar, member.name, user.level, rank + 1,
                 user.exp, user.coins, user.msg_count
             )
             await ctx.send(file=botutils.File(stat_img))
