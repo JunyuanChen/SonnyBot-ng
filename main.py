@@ -31,10 +31,12 @@ bot = botutils.setup_bot()
 STORAGE_LOCK = threading.lock()
 
 
-@botutils.command(bot)
+@bot.command()
 async def stat(ctx, user_id=None):
     if user_id is None:
         user_id = ctx.author.id
+    else:
+        user_id = botutils.extract_id(user_id)
 
     member = ctx.guild.get_member(user_id)
     avatar = io.BytesIO(await member.avatar_url_as(size=128).read())
