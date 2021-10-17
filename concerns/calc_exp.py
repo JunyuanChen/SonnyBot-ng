@@ -20,6 +20,16 @@ def level_to_exp(level):
     return 500 * level * (1 + level)
 
 
+def total_exp(user):
+    """ Calculate user's total EXP. """
+    return user.exp + level_to_exp(user.level)
+
+
+def rank_users(users):
+    """ Rank users by total EXP, in desc order. """
+    return sorted(users, key=lambda u: -total_exp(u))
+
+
 def recalc_level_and_exp(level, exp, exp_change):
     """ Recalculate level and EXP after exp_change. """
     exp += exp_change

@@ -43,7 +43,7 @@ async def stat(ctx, user_id=None):
         try:
             user = storage.User.load(user_id)
             users = storage.User.all()
-            rank = sorted(users, key=lambda u: -u.exp).index(user)
+            rank = calc_exp.rank_users(users).index(user)
             stat_img = user_stat.draw_stat(
                 avatar, member.name, user.level, rank,
                 user.exp, user.coins, user.msg_count
