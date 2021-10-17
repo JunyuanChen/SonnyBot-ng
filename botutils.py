@@ -82,3 +82,6 @@ def admin_command(client):
 
         return decorated
     return decorator
+
+
+File = discord.File
