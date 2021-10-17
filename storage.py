@@ -65,6 +65,7 @@ class User:
     exp = field("exp", "EXP at current level")
     level = field("level")
     coins = field("coins")
+    msg_count = field("msgCount")
     dmoj_username = field("dmojUsername")
 
     def save(self):
