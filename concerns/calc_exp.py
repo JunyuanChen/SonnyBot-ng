@@ -5,6 +5,11 @@ Calculations for EXP and levels.
 """
 
 
+def exp_requirement(level):
+    """ EXP required to level up from level. """
+    return 1000 * (level + 1)
+
+
 def level_to_exp(level):
     """
     Convert level to equivalent total EXP.
