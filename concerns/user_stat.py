@@ -12,12 +12,15 @@ from concerns import (
 )
 
 
-FIRA_35 = ImageFont.truetype("assets/fira_sans.ttf", 35)
 FIRA_24 = ImageFont.truetype("assets/fira_sans.ttf", 24)
+FIRA_35 = ImageFont.truetype("assets/fira_sans.ttf", 35)
 KARLA_22 = ImageFont.truetype("assets/karla.ttf", 22)
 KARLA_28 = ImageFont.truetype("assets/karla.ttf", 28)
+UBUNTU_25 = ImageFont.truetype("assets/ubuntu.ttf", 31)
+UBUNTU_31 = ImageFont.truetype("assets/ubuntu.ttf", 31)
 
 AVATAR_MASK = Image.open("assets/avatar_mask.png")
+AVATAR_MASK_66 = AVATAR_MASK.resize((66, 66))
 PROGRESS_END = Image.open("assets/progress_end.png")
 
 
@@ -64,5 +67,36 @@ def draw_stat(avatar, username, level, rank, exp_current, coins, msg_count):
     canvas.text((745, 150), msg_text, font=KARLA_22, fill=(255, 255, 255, 1))
 
     filename = tempfile.mkstemp(suffix=".png")[1]
+    template.save(filename)
+    return filename
+
+
+def leaderboard(avatars, usernames, levels):
+    """
+    Draw the leaderboard.  Return the path of the image.
+
+    The path points to a temporary file with extension png.  The caller
+    is responsible for removing this temporary file.
+
+    avatars is 10 top users' avatar images.  It should be a list of
+    BytesIO or path openable by PIL.Image.open()
+
+    usernames is 10 top users' usernames.
+    levels is 10 top users' levels.
+    """
+    template = Image.open("assets/leaderboard_template.png")
+    canvas = ImageDraw.Draw(template)
+
+    iterator = enumerate(zip(avatars, usernames, levels))
+    for i, (avatar, username, level) in iterator:
+        offset_y = 75 * i
+        avatar_img = Image.open(avatar).resize((66, 66))
+        template.paste(avatar_img, (5, 99 + offset_y))
+        template.paste(AVATAR_MASK_66, (5, 99 + offset_y), AVATAR_MASK_66)
+
+        canvas.text((175, 113 + offset_y), username, font=UBUNTU_31)
+        canvas.text((565, 115 + offset_y), f"Level: {level}", font=UBUNTU_25)
+
+    filename = tempfile.mkstemp(suffix=".png")
     template.save(filename)
     return filename
