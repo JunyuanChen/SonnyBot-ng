@@ -28,7 +28,7 @@ bot = botutils.setup_bot()
 
 
 # Storage access must be serialized
-STORAGE_LOCK = threading.lock()
+STORAGE_LOCK = threading.Lock()
 
 
 @bot.command()
