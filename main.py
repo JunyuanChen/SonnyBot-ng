@@ -58,30 +58,25 @@ async def stat(ctx, user_id=None):
             os.unlink(stat_img)
         except KeyError:
             await ctx.send(f"User <@{user_id}> not found!")
-        except storage.StorageError as e:
-            await ctx.send(str(e))
 
 
 @bot.command()
 async def leaderboard(ctx):
     with STORAGE_LOCK:
-        try:
-            users = storage.User.all()
-            top_10 = calc_exp.rank_users(users)[:10]
-            avatars = []
-            usernames = []
-            levels = []
-            for user in top_10:
-                member = ctx.guild.get_member(user.id)
-                avatar_data = member.avatar_url_as(size=128)
-                avatars.append(io.BytesIO(await avatar_data.read()))
-                usernames.append(member.name)
-                levels.append(user.level)
-            img = user_stat.leaderboard(avatars, usernames, levels)
-            await ctx.send(file=botutils.File(img))
-            os.unlink(leaderboard)
-        except storage.StorageError as e:
-            await ctx.send(str(e))
+        users = storage.User.all()
+        top_10 = calc_exp.rank_users(users)[:10]
+        avatars = []
+        usernames = []
+        levels = []
+        for user in top_10:
+            member = ctx.guild.get_member(user.id)
+            avatar_data = member.avatar_url_as(size=128)
+            avatars.append(io.BytesIO(await avatar_data.read()))
+            usernames.append(member.name)
+            levels.append(user.level)
+        img = user_stat.leaderboard(avatars, usernames, levels)
+        await ctx.send(file=botutils.File(img))
+        os.unlink(leaderboard)
 
 
 @botutils.admin_command(bot)
