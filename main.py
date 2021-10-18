@@ -33,10 +33,14 @@ STORAGE_LOCK = threading.lock()
 
 @bot.command()
 async def stat(ctx, user_id=None):
+    logger.debug("[Command] stat {user_id}")
     if user_id is None:
         user_id = ctx.author.id
     else:
         user_id = botutils.extract_id(user_id)
+        if user_id == -1:
+            await ctx.send(f"Invalid User ID provided!")
+            return
 
     member = ctx.guild.get_member(user_id)
     avatar = io.BytesIO(await member.avatar_url_as(size=128).read())
