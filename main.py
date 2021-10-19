@@ -37,9 +37,11 @@ async def stat(ctx, user_id=None):
     if user_id is None:
         user_id = ctx.author.id
     else:
-        user_id = botutils.extract_id(user_id)
-        if user_id == -1:
-            await ctx.send(f"Invalid User ID provided!")
+        extracted = botutils.extract_id(user_id)
+        if extracted != -1:
+            user_id = extracted
+        else:
+            await ctx.send(f"Invalid User ID {user_id}!")
             return
 
     member = ctx.guild.get_member(user_id)
