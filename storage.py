@@ -113,6 +113,7 @@ class User:
             "exp": 0,
             "level": 1,
             "coins": 0,
+            "msgCount": 0,
             "dmojUsername": None
         })
 
