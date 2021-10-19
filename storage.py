@@ -67,6 +67,7 @@ class User:
     coins = field("coins")
     msg_count = field("msgCount")
     dmoj_username = field("dmojUsername")
+    ccc_progress = field("cccProgress")
 
     def save(self):
         self._snap = copy.deepcopy(self._data)
