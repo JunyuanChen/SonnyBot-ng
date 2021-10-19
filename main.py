@@ -211,6 +211,7 @@ async def resetUserStat(ctx, user_id):
             user.exp = 0
             user.level = 0
             user.coins = 0
+            user.msg_count = 0
             user.save()
             storage.commit(f"Reset stat for user {user_id}")
             await ctx.send(f"<@{user_id}>'s stats are reset! "
