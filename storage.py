@@ -23,7 +23,7 @@ def field(field_name, doc=None, read_only=False):
     Example usage:
     ```
     class Foo:
-        bar = property("bar")
+        bar = field("bar")
     ```
     is equivalent to
 
