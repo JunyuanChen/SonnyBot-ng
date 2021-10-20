@@ -271,6 +271,9 @@ async def connectDMOJAccount(ctx, username):
         except AssertionError:
             await ctx.send(f"<@{user_id}>, you have already connected to "
                            f"a DMOJ Account ({user.dmoj_username})!")
+        except dmoj.RequestException as e:
+            logger.error(f"{type(e).__name__}: {e}")
+            await ctx.send("Network errors encountered - see logs for details")
         except storage.StorageError as e:
             await ctx.send(str(e))
 
@@ -289,6 +292,9 @@ async def fetchCCCProgress(ctx, user_id):
             await ctx.send(f"<@{user_id}>, your CCC progress is updated!")
         except KeyError:
             await ctx.send(f"User <@{user_id}> not found!")
+        except dmoj.RequestException as e:
+            logger.error(f"{type(e).__name__}: {e}")
+            await ctx.send("Network errors encountered - see logs for details")
         except storage.StorageError as e:
             await ctx.send(str(e))
 
