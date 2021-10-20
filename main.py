@@ -45,8 +45,7 @@ async def change_exp_subtask(ctx, user, amount):
     upgrade or downgrade.
     """
     old_level = user.level
-    user.level, user.exp = calc_exp.recalc_level_and_exp(
-        user.level, user.exp, amount)
+    user.level, user.exp = calc_exp.recalc_level(user.level, user.exp, amount)
     if user.level == -1:
         # User's level and EXP is insufficient for the change.
         # Operation should be cancelled.

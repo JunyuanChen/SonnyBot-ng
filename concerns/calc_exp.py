@@ -30,7 +30,7 @@ def rank_users(users):
     return sorted(users, key=lambda u: -total_exp(u))
 
 
-def recalc_level_and_exp(level, exp, exp_change):
+def recalc_level(level, exp, exp_change):
     """ Recalculate level and EXP after exp_change. """
     exp += exp_change
 
