@@ -76,18 +76,8 @@ async def change_exp_subtask(ctx, user, amount):
 
 
 @bot.command()
-async def stat(ctx, user_id=None):
-    logger.debug(f"[Command] stat {user_id}")
-    if user_id is None:
-        user_id = ctx.message.author.id
-    else:
-        extracted = botutils.extract_id(user_id)
-        if extracted != -1:
-            user_id = extracted
-        else:
-            await ctx.send(f"Invalid User ID {user_id}!")
-            return
-
+@botutils.with_optional_user_id_arg
+async def stat(ctx, user_id):
     member = ctx.guild.get_member(user_id)
     avatar = io.BytesIO(await member.avatar_url_as(size=128).read())
 
@@ -125,7 +115,9 @@ async def leaderboard(ctx):
         os.unlink(leaderboard)
 
 
-@botutils.admin_command(bot)
+@bot.command()
+@botutils.require_admin
+@botutils.with_user_id_arg
 async def removeUser(ctx, user_id):
     with STORAGE_LOCK:
         try:
@@ -138,7 +130,9 @@ async def removeUser(ctx, user_id):
             await ctx.send(str(e))
 
 
-@botutils.admin_command(bot)
+@bot.command()
+@botutils.require_admin
+@botutils.with_user_id_arg
 async def changeEXP(ctx, user_id, amount):
     with STORAGE_LOCK:
         try:
@@ -162,7 +156,9 @@ async def changeEXP(ctx, user_id, amount):
             await ctx.send(str(e))
 
 
-@botutils.admin_command(bot)
+@bot.command()
+@botutils.require_admin
+@botutils.with_user_id_arg
 async def changeCoins(ctx, user_id, amount):
     with STORAGE_LOCK:
         try:
@@ -189,7 +185,8 @@ async def changeCoins(ctx, user_id, amount):
             await ctx.send(str(e))
 
 
-@botutils.command(bot)
+@bot.command()
+@botutils.with_user_id_arg
 async def transactCoins(ctx, user_id, amount):
     """ Transact amount to user_id. """
     sender_id = ctx.message.author.id
@@ -230,7 +227,9 @@ async def transactCoins(ctx, user_id, amount):
             await ctx.send(str(e))
 
 
-@botutils.admin_command(bot)
+@bot.command()
+@botutils.require_admin
+@botutils.with_user_id_arg
 async def resetUserStat(ctx, user_id):
     with STORAGE_LOCK:
         try:
@@ -277,28 +276,20 @@ async def connectDMOJAccount(ctx, username):
 
 
 @bot.command()
-async def fetchCCCProgress(ctx, user_id=None):
-    if user_id is None:
-        user_id = ctx.message.author.id
-    else:
-        extracted = botutils.extract_id(user_id)
-        if extracted != -1:
-            user_id = extracted
-        else:
-            await ctx.send(f"Invalid User ID {user_id}!")
-            return
-
-    try:
-        user = storage.User.load(user_id)
-        award = dmoj.update(user)
-        await change_exp_subtask(ctx, user, award)
-        user.save()
-        storage.commit(f"Update CCC progress for User {user_id}")
-        await ctx.send(f"<@{user_id}>, your CCC progress is updated!")
-    except KeyError:
-        await ctx.send(f"User <@{user_id}> not found!")
-    except storage.StorageError as e:
-        await ctx.send(str(e))
+@botutils.with_optional_user_id_arg
+async def fetchCCCProgress(ctx, user_id):
+    with STORAGE_LOCK:
+        try:
+            user = storage.User.load(user_id)
+            award = dmoj.update(user)
+            await change_exp_subtask(ctx, user, award)
+            user.save()
+            storage.commit(f"Update CCC progress for User {user_id}")
+            await ctx.send(f"<@{user_id}>, your CCC progress is updated!")
+        except KeyError:
+            await ctx.send(f"User <@{user_id}> not found!")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
 
 
 @bot.command()

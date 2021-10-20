@@ -51,37 +51,27 @@ def extract_id(user_id):
 require_admin = discord.ext.commands.has_permissions(administrator=True)
 
 
-def command(client):
-    def decorator(f):
-        @client.command()
-        async def decorated(ctx, user_id, *args):
-            args_str = " ".join(map(str, args))
-            logger.debug(f"[Command] {f.__name__} {user_id} {args_str}")
+def with_user_id_arg(f):
+    async def decorated(ctx, user_id, *args):
+        extracted = extract_id(user_id)
+        if extracted == -1:
+            await ctx.send(f"Invalid User ID {user_id}!")
+            return
+        return await f(ctx, extracted, *args)
+    return decorated
+
+
+def with_optional_user_id_arg(f):
+    async def decorated(ctx, user_id=None):
+        if user_id is None:
+            extracted = ctx.message.author.id
+        else:
             extracted = extract_id(user_id)
             if extracted == -1:
                 await ctx.send(f"Invalid User ID {user_id}!")
-            else:
-                return await f(ctx, extracted, *args)
-
-        return decorated
-    return decorator
-
-
-def admin_command(client):
-    def decorator(f):
-        @client.command()
-        @require_admin
-        async def decorated(ctx, user_id, *args):
-            args_str = " ".join(map(str, args))
-            logger.debug(f"[Command] {f.__name__} {user_id} {args_str}")
-            extracted = extract_id(user_id)
-            if extracted == -1:
-                await ctx.send(f"Invalid User ID {user_id}!")
-            else:
-                return await f(ctx, extracted, *args)
-
-        return decorated
-    return decorator
+                return
+        return await f(ctx, user_id)
+    return decorated
 
 
 File = discord.File
