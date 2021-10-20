@@ -22,6 +22,8 @@ refer to Discord's user ID, as the whole point is to hide
 these details away from the rest of the program.
 """
 
+import functools
+
 import discord
 import logger
 
@@ -52,6 +54,7 @@ require_admin = discord.ext.commands.has_permissions(administrator=True)
 
 
 def with_user_id_arg(f):
+    @functools.wraps(f)
     async def decorated(ctx, user_id, *args):
         extracted = extract_id(user_id)
         if extracted == -1:
@@ -62,6 +65,7 @@ def with_user_id_arg(f):
 
 
 def with_optional_user_id_arg(f):
+    @functools.wraps(f)
     async def decorated(ctx, user_id=None):
         if user_id is None:
             extracted = ctx.message.author.id
