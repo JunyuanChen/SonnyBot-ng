@@ -63,3 +63,25 @@ def recalc_level(level, exp, exp_change):
             exp += 1000 * level
             level -= 1
     return level, exp
+
+
+
+def ccc_award(total_award, percentage):
+    """
+    EXP awarded for a problem with total_award done to percentage.
+
+    Since the first a few test cases are generally very easy, a linear
+    approach will be unfair.  Thus, the award is given in 20:80 ratio.
+    The first 50% gives 20% of the award, and the last 50% gives 80% of
+    the award.
+
+    Thus, if percentage <= 0.5, then the percentage of award given is:
+    0.2 * (percentage / 0.5) = 0.4 * percentage
+    And if percentage >= 0.5, then the weighed percentage is:
+    0.2 + 0.8 * ((percentage - 0.5) / 0.5)) = 1.6 * percentage - 0.6
+    """
+    if percentage <= 0.5:
+        weighed_percentage = 0.4 * percentage
+    else:
+        weighed_percentage = 1.6 * percentage - 0.6
+    return round(total_award * weighed_percentage)
