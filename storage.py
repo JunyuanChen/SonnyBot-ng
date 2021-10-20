@@ -81,8 +81,8 @@ class User:
             logger.info(f"User {self.id} destroyed")
             del self._LOADED[self.id]
         except StorageError as e:
-            logger.error(f"Failed to destroy user {user.id}")
-            raise StorageError(f"Failed to delete user {user.id}") from e
+            logger.error(f"Failed to destroy user {self.id}")
+            raise StorageError(f"Failed to delete user {self.id}") from e
 
     @classmethod
     def load(cls, id):
