@@ -1,0 +1,785 @@
+{
+    "/problem/ccc00j1": {
+        "name": "Calendar",
+        "difficulty": 5
+    },
+    "/problem/ccc00j2": {
+        "name": "9966",
+        "difficulty": 3
+    },
+    "/problem/ccc00s1": {
+        "name": "Slot Machines",
+        "difficulty": 5
+    },
+    "/problem/ccc00s2": {
+        "name": "Brabbling Brooks",
+        "difficulty": 7
+    },
+    "/problem/ccc00s3": {
+        "name": "Surfin'",
+        "difficulty": 7
+    },
+    "/problem/ccc00s4": {
+        "name": "Golf",
+        "difficulty": 10
+    },
+    "/problem/ccc00s5": {
+        "name": "Sheep and Coyotes",
+        "difficulty": 10
+    },
+    "/problem/ccc01j1": {
+        "name": "Dressing Up",
+        "difficulty": 3
+    },
+    "/problem/ccc01j2": {
+        "name": "Mod Inverse",
+        "difficulty": 3
+    },
+    "/problem/ccc01s1": {
+        "name": "Keeping Score",
+        "difficulty": 5
+    },
+    "/problem/ccc01s2": {
+        "name": "Spirals",
+        "difficulty": 5
+    },
+    "/problem/ccc01s3": {
+        "name": "Strategic Bombing",
+        "difficulty": 10
+    },
+    "/problem/ccc01s4": {
+        "name": "Cookies",
+        "difficulty": 7
+    },
+    "/problem/ccc01s5": {
+        "name": "Post's Correspondence Problem",
+        "difficulty": 10
+    },
+    "/problem/ccc02j1": {
+        "name": "0123456789",
+        "difficulty": 3
+    },
+    "/problem/ccc02j2": {
+        "name": "AmeriCanadian",
+        "difficulty": 3
+    },
+    "/problem/ccc02j3": {
+        "name": "The Students' Council Breakfast"
+    },
+    "/problem/ccc02s1": {
+        "name": "The Students' Council BreakFast",
+        "difficulty": 5
+    },
+    "/problem/ccc02s2": {
+        "name": "Fraction Action",
+        "difficulty": 5
+    },
+    "/problem/ccc02s3": {
+        "name": "Blindfold",
+        "difficulty": 5
+    },
+    "/problem/ccc02s4": {
+        "name": "Bridge Crossing",
+        "difficulty": 10
+    },
+    "/problem/ccc02s5": {
+        "name": "Follow the Bouncing Ball",
+        "difficulty": 10
+    },
+    "/problem/ccc03j1": {
+        "name": "Trident",
+        "difficulty": 3
+    },
+    "/problem/ccc03j2": {
+        "name": "Picture Perfect",
+        "difficulty": 3
+    },
+    "/problem/ccc03s1": {
+        "name": "Snakes and Ladders",
+        "difficulty": 5
+    },
+    "/problem/ccc03s2": {
+        "name": "Poetry",
+        "difficulty": 5
+    },
+    "/problem/ccc03s3": {
+        "name": "Floor Plan",
+        "difficulty": 7
+    },
+    "/problem/ccc03s4": {
+        "name": "Substrings",
+        "difficulty": 15
+    },
+    "/problem/ccc03s5": {
+        "name": "Trucking Troubles",
+        "difficulty": 12
+    },
+    "/problem/ccc04j1": {
+        "name": "Squares",
+        "difficulty": 3
+    },
+    "/problem/ccc04j2": {
+        "name": "Terms of Office",
+        "difficulty": 3
+    },
+    "/problem/ccc04j3": {
+        "name": "Smile with Similes",
+        "difficulty": 3
+    },
+    "/problem/ccc04j4": {
+        "name": "A Simple Encryption Algorithm",
+        "difficulty": 5
+    },
+    "/problem/ccc04j5": {
+        "name": "Fractals",
+        "difficulty": 10
+    },
+    "/problem/ccc04s1": {
+        "name": "Fix",
+        "difficulty": 5
+    },
+    "/problem/ccc04s2": {
+        "name": "TopYodeller",
+        "difficulty": 5
+    },
+    "/problem/ccc04s3": {
+        "name": "Spreadsheet",
+        "difficulty": 10
+    },
+    "/problem/ccc04s4": {
+        "name": "Space Turtle",
+        "difficulty": 10
+    },
+    "/problem/ccc04s5": {
+        "name": "Super Plumber",
+        "difficulty": 10
+    },
+    "/problem/ccc05j1": {
+        "name": "The Cell Sell",
+        "difficulty": 3
+    },
+    "/problem/ccc05j2": {
+        "name": "RSA Numbers",
+        "difficulty": 3
+    },
+    "/problem/ccc05j3": {
+        "name": "Returning Home",
+        "difficulty": 5
+    },
+    "/problem/ccc05j4": {
+        "name": "Cross Spiral",
+        "difficulty": 7
+    },
+    "/problem/ccc05j5": {
+        "name": "Bananas",
+        "difficulty": 10
+    },
+    "/problem/ccc05s1": {
+        "name": "Snow Calls",
+        "difficulty": 5
+    },
+    "/problem/ccc05s2": {
+        "name": "Mouse Move",
+        "difficulty": 5
+    },
+    "/problem/ccc05s3": {
+        "name": "Quantum Operations",
+        "difficulty": 10
+    },
+    "/problem/ccc05s4": {
+        "name": "Pyramid Message Scheme",
+        "difficulty": 10
+    },
+    "/problem/ccc05s5": {
+        "name": "Pinball Ranking",
+        "difficulty": 15
+    },
+    "/problem/ccc06j1": {
+        "name": "Canadian Calorie Counting",
+        "difficulty": 3
+    },
+    "/problem/ccc06j2": {
+        "name": "Roll the Dice",
+        "difficulty": 3
+    },
+    "/problem/ccc06j3": {
+        "name": "Cell-Phone Messaging",
+        "difficulty": 3
+    },
+    "/problem/ccc06j4": {
+        "name": "It's tough being a teen!",
+        "difficulty": 7
+    },
+    "/problem/ccc06j5": {
+        "name": "CCC Othello",
+        "difficulty": 10
+    },
+    "/problem/ccc06s1": {
+        "name": "Maternity",
+        "difficulty": 5
+    },
+    "/problem/ccc06s2": {
+        "name": "Attack of the CipherTexts",
+        "difficulty": 5
+    },
+    "/problem/ccc06s3": {
+        "name": "Tin Can Telephone",
+        "difficulty": 12
+    },
+    "/problem/ccc06s4": {
+        "name": "Groups",
+        "difficulty": 10
+    },
+    "/problem/ccc06s5": {
+        "name": "Origin of Life",
+        "difficulty": 15
+    },
+    "/problem/ccc07j1": {
+        "name": "Who is in the Middle?",
+        "difficulty": 3
+    },
+    "/problem/ccc07j2": {
+        "name": "I Speak TXTMSG",
+        "difficulty": 3
+    },
+    "/problem/ccc07j3": {
+        "name": "Deal or No Deal Calculator",
+        "difficulty": 3
+    },
+    "/problem/ccc07j4": {
+        "name": "Anagram Checker",
+        "difficulty": 5
+    },
+    "/problem/ccc07j5": {
+        "name": "Keep on Truckin",
+        "difficulty": 7
+    },
+    "/problem/ccc07s1": {
+        "name": "Federal Voting Age",
+        "difficulty": 3
+    },
+    "/problem/ccc07s2": {
+        "name": "Boxes",
+        "difficulty": 5
+    },
+    "/problem/ccc07s3": {
+        "name": "Friends",
+        "difficulty": 7
+    },
+    "/problem/ccc07s4": {
+        "name": "Waterpark",
+        "difficulty": 7
+    },
+    "/problem/ccc07s5": {
+        "name": "Bowling for Numbers",
+        "difficulty": 10
+    },
+    "/problem/ccc08j1": {
+        "name": "Body Mass Index",
+        "difficulty": 3
+    },
+    "/problem/ccc08j2": {
+        "name": "Do the Shuffle",
+        "difficulty": 3
+    },
+    "/problem/ccc08j3": {
+        "name": "GPS Text Entry",
+        "difficulty": 3
+    },
+    "/problem/ccc08j4": {
+        "name": "From Prefix to Postfix",
+        "difficulty": 7
+    },
+    "/problem/ccc08s1": {
+        "name": "It's Cold Here!",
+        "difficulty": 5
+    },
+    "/problem/ccc08s2": {
+        "name": "Pennies in the Ring",
+        "difficulty": 5
+    },
+    "/problem/ccc08s3": {
+        "name": "Maze",
+        "difficulty": 7
+    },
+    "/problem/ccc08s4": {
+        "name": "Twenty-four",
+        "difficulty": 10
+    },
+    "/problem/ccc08s5": {
+        "name": "Nukit",
+        "difficulty": 10
+    },
+    "/problem/ccc09j1": {
+        "name": "ISBN",
+        "difficulty": 3
+    },
+    "/problem/ccc09j2": {
+        "name": "Old Fishin' Hole",
+        "difficulty": 5
+    },
+    "/problem/ccc09j3": {
+        "name": "Good Times",
+        "difficulty": 5
+    },
+    "/problem/ccc09j4": {
+        "name": "Signage",
+        "difficulty": 7
+    },
+    "/problem/ccc09s1": {
+        "name": "Cool Numbers",
+        "difficulty": 5
+    },
+    "/problem/ccc09s2": {
+        "name": "The Lights Going On and Off",
+        "difficulty": 10
+    },
+    "/problem/ccc09s3": {
+        "name": "Degrees of Separation",
+        "difficulty": 10
+    },
+    "/problem/ccc09s4": {
+        "name": "Shop and Ship",
+        "difficulty": 10
+    },
+    "/problem/ccc09s5": {
+        "name": "Wireless",
+        "difficulty": 12
+    },
+    "/problem/ccc10j1": {
+        "name": "What is n, Daddy?",
+        "difficulty": 3
+    },
+    "/problem/ccc10j2": {
+        "name": "Up and Down",
+        "difficulty": 5
+    },
+    "/problem/ccc10j3": {
+        "name": "Punchy",
+        "difficulty": 5
+    },
+    "/problem/ccc10j4": {
+        "name": "Global Warming",
+        "difficulty": 5
+    },
+    "/problem/ccc10j5": {
+        "name": "Knight Hop",
+        "difficulty": 7
+    },
+    "/problem/ccc10s1": {
+        "name": "Computer Purchase",
+        "difficulty": 5
+    },
+    "/problem/ccc10s2": {
+        "name": "Huffman Encoding",
+        "difficulty": 5
+    },
+    "/problem/ccc10s3": {
+        "name": "Firehose",
+        "difficulty": 15
+    },
+    "/problem/ccc10s4": {
+        "name": "Animal Farm",
+        "difficulty": 15
+    },
+    "/problem/ccc10s5": {
+        "name": "Nutrient Tree",
+        "difficulty": 20
+    },
+    "/problem/ccc11j1": {
+        "name": "Which Alien?",
+        "difficulty": 3
+    },
+    "/problem/ccc11j2": {
+        "name": "Who Has Seen The Wind",
+        "difficulty": 5
+    },
+    "/problem/ccc11j3": {
+        "name": "Sumac Sequences",
+        "difficulty": 5
+    },
+    "/problem/ccc11j4": {
+        "name": "Boring Business",
+        "difficulty": 7
+    },
+    "/problem/ccc11j5": {
+        "name": "Unfriend",
+        "difficulty": 7
+    },
+    "/problem/ccc11s1": {
+        "name": "English or French?",
+        "difficulty": 5
+    },
+    "/problem/ccc11s2": {
+        "name": "Multiple Choice",
+        "difficulty": 5
+    },
+    "/problem/ccc11s3": {
+        "name": "Alice Through the Looking Glass",
+        "difficulty": 10
+    },
+    "/problem/ccc11s4": {
+        "name": "Blood Distribution",
+        "difficulty": 10
+    },
+    "/problem/ccc11s5": {
+        "name": "Switch",
+        "difficulty": 12
+    },
+    "/problem/ccc12j1": {
+        "name": "Speed fines are not fine!",
+        "difficulty": 3
+    },
+    "/problem/ccc12j2": {
+        "name": "Sounds fishy!",
+        "difficulty": 3
+    },
+    "/problem/ccc12j3": {
+        "name": "Icon Scaling",
+        "difficulty": 3
+    },
+    "/problem/ccc12j4": {
+        "name": "Big Bang Secrets",
+        "difficulty": 3
+    },
+    "/problem/ccc12s1": {
+        "name": "Don't pass me the ball!",
+        "difficulty": 3
+    },
+    "/problem/ccc12s2": {
+        "name": "Aromatic Numbers",
+        "difficulty": 5
+    },
+    "/problem/ccc12s3": {
+        "name": "Absolutely Acidic",
+        "difficulty": 7
+    },
+    "/problem/ccc12s4": {
+        "name": "A Coin Game",
+        "difficulty": 15
+    },
+    "/problem/ccc12s5": {
+        "name": "Mouse Journey",
+        "difficulty": 7
+    },
+    "/problem/ccc13j1": {
+        "name": "Next in line",
+        "difficulty": 3
+    },
+    "/problem/ccc13j2": {
+        "name": "Rotating letters",
+        "difficulty": 3
+    },
+    "/problem/ccc13j4": {
+        "name": "Time on task",
+        "difficulty": 5
+    },
+    "/problem/ccc13s1": {
+        "name": "From 1987 to 2013",
+        "difficulty": 5
+    },
+    "/problem/ccc13s2": {
+        "name": "Bridge Transport",
+        "difficulty": 5
+    },
+    "/problem/ccc13s3": {
+        "name": "Chances of Winning",
+        "difficulty": 12
+    },
+    "/problem/ccc13s4": {
+        "name": "Who is Taller",
+        "difficulty": 7
+    },
+    "/problem/ccc13s5": {
+        "name": "Factor Solitaire",
+        "difficulty": 15
+    },
+    "/problem/ccc14j1": {
+        "name": "Triangle Times",
+        "difficulty": 3
+    },
+    "/problem/ccc14j2": {
+        "name": "Vote Count",
+        "difficulty": 3
+    },
+    "/problem/ccc14j3": {
+        "name": "Double Dice",
+        "difficulty": 3
+    },
+    "/problem/ccc14s1": {
+        "name": "Party Invitation",
+        "difficulty": 5
+    },
+    "/problem/ccc14s2": {
+        "name": "Assigning Partners",
+        "difficulty": 5
+    },
+    "/problem/ccc14s3": {
+        "name": "The Geneva Confection",
+        "difficulty": 7
+    },
+    "/problem/ccc14s4": {
+        "name": "Tinted Glass Window",
+        "difficulty": 15
+    },
+    "/problem/ccc14s5": {
+        "name": "Lazy Fox",
+        "difficulty": 20
+    },
+    "/problem/ccc15j1": {
+        "name": "Special Day",
+        "difficulty": 3
+    },
+    "/problem/ccc15j2": {
+        "name": "Happy or Sad",
+        "difficulty": 3
+    },
+    "/problem/ccc15j3": {
+        "name": "R\u00f6varspr\u00e5ket",
+        "difficulty": 5
+    },
+    "/problem/ccc15j4": {
+        "name": "Wait Time",
+        "difficulty": 5
+    },
+    "/problem/ccc15j5": {
+        "name": "\u03c0-day",
+        "difficulty": 10
+    },
+    "/problem/ccc15s1": {
+        "name": "Zero That Out",
+        "difficulty": 3
+    },
+    "/problem/ccc15s2": {
+        "name": "Jerseys",
+        "difficulty": 5
+    },
+    "/problem/ccc15s3": {
+        "name": "Gates",
+        "difficulty": 10
+    },
+    "/problem/ccc15s4": {
+        "name": "Convex Hull",
+        "difficulty": 15
+    },
+    "/problem/ccc15s5": {
+        "name": "Greedy For Pies",
+        "difficulty": 20
+    },
+    "/problem/ccc16j1": {
+        "name": "Tournament Selection",
+        "difficulty": 3
+    },
+    "/problem/ccc16j2": {
+        "name": "Magic Squares",
+        "difficulty": 3
+    },
+    "/problem/ccc16j3": {
+        "name": "Hidden Palindrome",
+        "difficulty": 5
+    },
+    "/problem/ccc16j4": {
+        "name": "Arrival Time",
+        "difficulty": 5
+    },
+    "/problem/ccc16s1": {
+        "name": "Ragaman",
+        "difficulty": 3
+    },
+    "/problem/ccc16s2": {
+        "name": "Tandem Bicycle",
+        "difficulty": 5
+    },
+    "/problem/ccc16s3": {
+        "name": "Phonomenal Reviews",
+        "difficulty": 15
+    },
+    "/problem/ccc16s4": {
+        "name": "Combining Riceballs",
+        "difficulty": 15
+    },
+    "/problem/ccc16s5": {
+        "name": "Circle of Life",
+        "difficulty": 20
+    },
+    "/problem/ccc17j1": {
+        "name": "Quadrant Selection",
+        "difficulty": 3
+    },
+    "/problem/ccc17j2": {
+        "name": "Shifty Sum",
+        "difficulty": 3
+    },
+    "/problem/ccc17j3": {
+        "name": "Exactly Electrical",
+        "difficulty": 3
+    },
+    "/problem/ccc17j4": {
+        "name": "Favourite Times",
+        "difficulty": 5
+    },
+    "/problem/ccc17s1": {
+        "name": "Sum Game",
+        "difficulty": 3
+    },
+    "/problem/ccc17s2": {
+        "name": "High Tide, Low Tide",
+        "difficulty": 5
+    },
+    "/problem/ccc17s3": {
+        "name": "Nailed It!",
+        "difficulty": 7
+    },
+    "/problem/ccc17s4": {
+        "name": "Minimum Cost Flow",
+        "difficulty": 17
+    },
+    "/problem/ccc17s5": {
+        "name": "RMT",
+        "difficulty": 20
+    },
+    "/problem/ccc18j1": {
+        "name": "Telemarketer or not?",
+        "difficulty": 3
+    },
+    "/problem/ccc18j2": {
+        "name": "Occupy parking",
+        "difficulty": 3
+    },
+    "/problem/ccc18j3": {
+        "name": "Are we there yet?",
+        "difficulty": 3
+    },
+    "/problem/ccc18j5": {
+        "name": "Choose your own path",
+        "difficulty": 7
+    },
+    "/problem/ccc18s1": {
+        "name": "Voronoi Village",
+        "difficulty": 3
+    },
+    "/problem/ccc18s2": {
+        "name": "Sunflowers",
+        "difficulty": 5
+    },
+    "/problem/ccc18s3": {
+        "name": "RoboThieves",
+        "difficulty": 12
+    },
+    "/problem/ccc18s4": {
+        "name": "Balanced Trees",
+        "difficulty": 15
+    },
+    "/problem/ccc18s5": {
+        "name": "Maximum Strategic Savings",
+        "difficulty": 20
+    },
+    "/problem/ccc19j1": {
+        "name": "Winning Score",
+        "difficulty": 3
+    },
+    "/problem/ccc19j2": {
+        "name": "Time to Decompress",
+        "difficulty": 3
+    },
+    "/problem/ccc19j3": {
+        "name": "Cold Compress",
+        "difficulty": 5
+    },
+    "/problem/ccc19j5": {
+        "name": "Rule of Three",
+        "difficulty": 15
+    },
+    "/problem/ccc19s1": {
+        "name": "Flipper",
+        "difficulty": 3
+    },
+    "/problem/ccc19s2": {
+        "name": "Pretty Average Primes",
+        "difficulty": 5
+    },
+    "/problem/ccc19s3": {
+        "name": "Arithmetic Squares",
+        "difficulty": 12
+    },
+    "/problem/ccc19s4": {
+        "name": "Tourism",
+        "difficulty": 20
+    },
+    "/problem/ccc19s5": {
+        "name": "Triangle: The Data Structure",
+        "difficulty": 20
+    },
+    "/problem/ccc20j1": {
+        "name": "Dog Treats",
+        "difficulty": 3
+    },
+    "/problem/ccc20j2": {
+        "name": "Epidemiology",
+        "difficulty": 3
+    },
+    "/problem/ccc20j3": {
+        "name": "Art",
+        "difficulty": 3
+    },
+    "/problem/ccc20j4": {
+        "name": "Cyclic Shifts",
+        "difficulty": 5
+    },
+    "/problem/ccc20s1": {
+        "name": "Surmising a Sprinter's Speed",
+        "difficulty": 5
+    },
+    "/problem/ccc20s2": {
+        "name": "Escape Room",
+        "difficulty": 10
+    },
+    "/problem/ccc20s3": {
+        "name": "Searching for Strings",
+        "difficulty": 12
+    },
+    "/problem/ccc20s4": {
+        "name": "Swapping Seats",
+        "difficulty": 12
+    },
+    "/problem/ccc20s5": {
+        "name": "Josh's Double Bacon Deluxe",
+        "difficulty": 17
+    },
+    "/problem/ccc21j1": {
+        "name": "Boiling Water",
+        "difficulty": 3
+    },
+    "/problem/ccc21j2": {
+        "name": "Silent Auction",
+        "difficulty": 3
+    },
+    "/problem/ccc21j3": {
+        "name": "Secret Instructions",
+        "difficulty": 5
+    },
+    "/problem/ccc21j4": {
+        "name": "Arranging Books",
+        "difficulty": 7
+    },
+    "/problem/ccc21s1": {
+        "name": "Crazing Fencing",
+        "difficulty": 5
+    },
+    "/problem/ccc21s2": {
+        "name": "Modern Art",
+        "difficulty": 7
+    },
+    "/problem/ccc21s3": {
+        "name": "Lunch Concert",
+        "difficulty": 10
+    },
+    "/problem/ccc21s4": {
+        "name": "Daily Commute",
+        "difficulty": 12
+    },
+    "/problem/ccc21s5": {
+        "name": "Math Homework",
+        "difficulty": 12
+    }
+}
