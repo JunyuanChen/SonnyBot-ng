@@ -58,9 +58,8 @@ def recalc_level(level, exp, exp_change):
             level += 1
             exp -= required
             required += 1000
-        return level, exp
-
-    while exp < 0 and level > -1:
-        exp += 1000 * level
-        level -= 1
+    else:
+        while exp < 0 and level > -1:
+            exp += 1000 * level
+            level -= 1
     return level, exp
