@@ -264,6 +264,9 @@ async def connectDMOJAccount(ctx, username):
                                "and finish at least 1 CCC problem.")
             else:
                 await change_exp_subtask(ctx, user, award)
+                user.save()
+                storage.commit(f"Connect DMOJ Account {username} "
+                               f"to User {user_id}")
                 await ctx.send(f"<@{user_id}>, you have successfully "
                                f"connected to DMOJ Account {username}!")
         except AssertionError:
