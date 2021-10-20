@@ -177,9 +177,9 @@ def sync():
         pass
 
     try:
-        subprocess.run(["git", "reset", "--hard", "HEAD~1"],
+        subprocess.run(["git", "fetch", REMOTE_NAME],
                        cwd=STORAGE_DIR, check=True)
-        subprocess.run(["git", "pull", REMOTE_NAME],
+        subprocess.run(["git", "reset", "--hard", "FETCH_HEAD"],
                        cwd=STORAGE_DIR, check=True)
         logger.info("Synchronized storage from remote")
         User._LOADED = {}
