@@ -186,6 +186,31 @@ async def changeCoins(ctx, user_id, amount):
 
 
 @bot.command()
+@botutils.require_admin
+@botutils.with_user_id_arg
+async def changeMessageSent(ctx, user_id, amount):
+    with STORAGE_LOCK:
+        try:
+            amount = int(amount)
+            user = storage.User.load(user_id)
+            user.msg_count += amount
+            assert user.msg_count >= 0
+            user.save()
+            storage.commit("Change message count for "
+                           f"user {user_id}: {amount}")
+            await ctx.senf(f"<@{user_id}>'s message count "
+                           f"has been updated by {amount}")
+        except ValueError:
+            await ctx.send(f"Amount {amount} must be an integer!")
+        except AssertionError:
+            await ctx.send(f"<@{user_id}>'s message count can't negative!")
+        except KeyError:
+            await ctx.send(f"User <@{user_id}> not found!")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
+
+
+@bot.command()
 @botutils.with_user_id_arg
 async def transactCoins(ctx, user_id, amount):
     """ Transact amount to user_id. """
