@@ -114,7 +114,8 @@ class User:
             "level": 1,
             "coins": 0,
             "msgCount": 0,
-            "dmojUsername": None
+            "dmojUsername": None,
+            "cccProgress": {}
         })
 
         try:

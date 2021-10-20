@@ -49,7 +49,10 @@ def update(user):
 def update_ccc(user, ccc):
     reward = 0
     for problem, percentage in ccc.items():
-        old_percentage = user.ccc_progress[problem]
+        if problem in user.ccc_progress:
+            old_percentage = user.ccc_progress[problem]
+        else:
+            old_percentage = 0
         if old_percentage < percentage:
             user.ccc_progress[problem] = percentage
             # TODO Reward user some exp
