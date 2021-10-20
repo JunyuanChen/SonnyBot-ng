@@ -44,7 +44,7 @@ def extract_id(user_id):
         return int(user_id[3:-1])
     except ValueError:
         logger.warn(f"Malformed UserID string: {user_id}")
-        logger.warn(f"Returning ID -1 as fallback")
+        logger.warn("Returning ID -1 as fallback")
         return -1
 
 

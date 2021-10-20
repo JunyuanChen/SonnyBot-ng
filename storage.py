@@ -146,7 +146,7 @@ class User:
                     id = int(data_file[:-5])
                     user = cls.load(id)
                     result.append(user)
-                except ValueError as e:
+                except ValueError:
                     logger.warn(f"Invalid data file ignored: {data_file}")
                 except KeyError:
                     # data file corrupted

@@ -77,7 +77,7 @@ async def change_exp_subtask(ctx, user, amount):
 
 @bot.command()
 async def stat(ctx, user_id=None):
-    logger.debug("[Command] stat {user_id}")
+    logger.debug(f"[Command] stat {user_id}")
     if user_id is None:
         user_id = ctx.message.author.id
     else:
@@ -222,7 +222,7 @@ async def transactCoins(ctx, user_id, amount):
                 await ctx.send(f"<@{sender.id}>, amount must be positive!")
             else:
                 logger.debug("transactCoins: Not enough coins")
-                await ctx.send(f"<@{sender.id}>, you do not have enough coins!")
+                await ctx.send(f"<@{sender.id}>, you don't have enough coins!")
         except KeyError:
             logger.debug(f"transactCoins: User {user_id} not found")
             await ctx.send(f"User <@{user_id}> not found!")
@@ -280,7 +280,7 @@ async def syncData(ctx):
     with STORAGE_LOCK:
         try:
             storage.sync()
-            await ctx.send(f"Successfully synced to remote!")
+            await ctx.send("Successfully synced to remote!")
         except storage.StorageError as e:
             await ctx.send(str(e))
 

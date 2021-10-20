@@ -8,6 +8,7 @@ abbrev(12345)     # "12.3k"
 abbrev(87654321)  # "87.65M"
 """
 
+
 def abbrev(number):
     if number / 1000000000 >= 1:
         return f"{round(number / 1000000000, 1)}G"
