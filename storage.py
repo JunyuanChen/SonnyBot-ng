@@ -154,6 +154,11 @@ class User:
                     pass
         return result
 
+    @classmethod
+    def clear_cache(cls):
+        cls._LOADED = {}
+        logger.info(f"Cleared {cls.__name__} cache")
+
 
 def commit(commit_message, no_error=False):
     try:
@@ -177,9 +182,8 @@ def sync():
                        cwd=STORAGE_DIR, check=True)
         subprocess.run(["git", "reset", "--hard", "FETCH_HEAD"],
                        cwd=STORAGE_DIR, check=True)
+        User.clear_cache()
         logger.info("Synchronized storage from remote")
-        User._LOADED = {}
-        logger.info("Cleared User cache")
     except subprocess.CalledProcessError as e:
         logger.error(f"Git operation failed with {e.returncode}: {e.cmd}")
         logger.error("Failed to synchronize with remote")
