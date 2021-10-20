@@ -57,3 +57,6 @@ def update_ccc(user, ccc):
             user.ccc_progress[problem] = percentage
             # TODO Reward user some exp
     return reward
+
+
+RequestException = requests.exceptions.RequestException
