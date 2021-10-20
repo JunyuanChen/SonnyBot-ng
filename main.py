@@ -268,6 +268,8 @@ async def connectDMOJAccount(ctx, username):
                                f"to User {user_id}")
                 await ctx.send(f"<@{user_id}>, you have successfully "
                                f"connected to DMOJ Account {username}!")
+        except KeyError:
+            await ctx.send(f"User <@{user_id}> not found!")
         except AssertionError:
             await ctx.send(f"<@{user_id}>, you have already connected to "
                            f"a DMOJ Account ({user.dmoj_username})!")
@@ -276,6 +278,22 @@ async def connectDMOJAccount(ctx, username):
             await ctx.send("Network errors encountered - see logs for details")
         except storage.StorageError as e:
             await ctx.send(str(e))
+
+
+@bot.command()
+@botutils.with_optional_user_id_arg
+async def getDMOJAccount(ctx, user_id):
+    with STORAGE_LOCK:
+        try:
+            user = storage.User.load(user_id)
+            if user.dmoj_username is None:
+                await ctx.send(f"<@{user_id}>, you don't have a "
+                               "DMOJ Account connected!")
+            else:
+                await ctx.send(f"<@{user_id}>, your DMOJ Account "
+                               f"is {user.dmoj_username}!")
+        except KeyError:
+            await ctx.send(f"User <@{user_id}> not found!")
 
 
 @bot.command()
