@@ -284,7 +284,8 @@ async def fetchCCCProgress(ctx, user_id):
             award = dmoj.update(user)
             await change_exp_subtask(ctx, user, award)
             user.save()
-            storage.commit(f"Update CCC progress for User {user_id}")
+            storage.commit(f"Update CCC progress for User {user_id}",
+                           no_error=True)
             await ctx.send(f"<@{user_id}>, your CCC progress is updated!")
         except KeyError:
             await ctx.send(f"User <@{user_id}> not found!")
