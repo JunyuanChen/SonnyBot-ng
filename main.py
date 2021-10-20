@@ -12,7 +12,8 @@ import storage
 from concerns import (
     user_stat,
     calc_exp,
-    calc_coins
+    calc_coins,
+    dmoj
 )
 
 
@@ -246,6 +247,29 @@ async def resetUserStat(ctx, user_id):
         except KeyError:
             logger.debug(f"resetUserStat: User {user_id} not found")
             await ctx.send(f"User <@{user_id}> not found!")
+        except storage.StorageError as e:
+            await ctx.send(str(e))
+
+
+@bot.command()
+async def connectDMOJAccount(ctx, username):
+    user_id = ctx.message.author.id
+    with STORAGE_LOCK:
+        try:
+            user = storage.User.load(user_id)
+            assert user.dmoj_username is None
+            award = dmoj.connect(user, username)
+            if award is None:
+                await ctx.send(f"<@{user_id}>, cannot connect DMOJ Account "
+                               f"{username}! Please ensure the account exists "
+                               "and finish at least 1 CCC problem.")
+            else:
+                await change_exp_subtask(ctx, user, award)
+                await ctx.send(f"<@{user_id}>, you have successfully "
+                               f"connected to DMOJ Account {username}!")
+        except AssertionError:
+            await ctx.send(f"<@{user_id}>, you have already connected to "
+                           f"a DMOJ Account ({user.dmoj_username})!")
         except storage.StorageError as e:
             await ctx.send(str(e))
 
