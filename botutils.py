@@ -8,11 +8,11 @@ Discord will by default supply a user ID in format <@!xxx>
 where xxx is a unique positive integer.  However, the string
 nature makes this ID not so useful.
 
-The `command()` and `admin_command()` wrapper decorator will
-instead supply the integer, extracted, as the user ID.  Thus,
-if a function looks like
+The `with_user_id_arg()` and `with_optional_user_id_arg()`
+decorator will instead supply the integer, extracted, as
+the user ID.  Thus, if a function looks like
 ```
-@command(client)
+@with_user_id_arg
 def foo(ctx, user_id):
     # bar
 ```
