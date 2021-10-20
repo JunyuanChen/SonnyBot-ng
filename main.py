@@ -277,6 +277,31 @@ async def connectDMOJAccount(ctx, username):
 
 
 @bot.command()
+async def fetchCCCProgress(ctx, user_id=None):
+    if user_id is None:
+        user_id = ctx.message.author.id
+    else:
+        extracted = botutils.extract_id(user_id)
+        if extracted != -1:
+            user_id = extracted
+        else:
+            await ctx.send(f"Invalid User ID {user_id}!")
+            return
+
+    try:
+        user = storage.User.load(user_id)
+        award = dmoj.update(user)
+        await change_exp_subtask(ctx, user, award)
+        user.save()
+        storage.commit(f"Update CCC progress for User {user_id}")
+        await ctx.send(f"<@{user_id}>, your CCC progress is updated!")
+    except KeyError:
+        await ctx.send(f"User <@{user_id}> not found!")
+    except storage.StorageError as e:
+        await ctx.send(str(e))
+
+
+@bot.command()
 @botutils.require_admin
 async def syncData(ctx):
     logger.debug("[Command] syncData")
