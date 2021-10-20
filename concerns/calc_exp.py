@@ -65,7 +65,6 @@ def recalc_level(level, exp, exp_change):
     return level, exp
 
 
-
 def ccc_award(total_award, percentage):
     """
     EXP awarded for a problem with total_award done to percentage.

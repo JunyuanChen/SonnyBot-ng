@@ -25,6 +25,7 @@ these details away from the rest of the program.
 import functools
 
 import discord
+import discord.ext.commands
 import logger
 
 
@@ -74,7 +75,7 @@ def with_optional_user_id_arg(f):
             if extracted == -1:
                 await ctx.send(f"Invalid User ID {user_id}!")
                 return
-        return await f(ctx, user_id)
+        return await f(ctx, extracted)
     return decorated
 
 

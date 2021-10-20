@@ -266,7 +266,7 @@ async def resetUserStat(ctx, user_id):
             user.save()
             storage.commit(f"Reset stat for user {user_id}")
             await ctx.send(f"<@{user_id}>'s stats are reset! "
-                           f"(CCC progress not included)")
+                           "(CCC progress not included)")
         except KeyError:
             logger.debug(f"resetUserStat: User {user_id} not found")
             await ctx.send(f"User <@{user_id}> not found!")
@@ -354,4 +354,5 @@ async def syncData(ctx):
             await ctx.send(str(e))
 
 
-bot.run(os.environ["BotToken"])
+if __name__ == '__main__':
+    bot.run(os.environ["BotToken"])
