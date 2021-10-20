@@ -155,7 +155,7 @@ class User:
         return result
 
 
-def commit(commit_message):
+def commit(commit_message, no_error=False):
     try:
         subprocess.run(["git", "add", "--all"], cwd=STORAGE_DIR, check=True)
         subprocess.run(["git", "commit", "-m", commit_message],
@@ -163,18 +163,14 @@ def commit(commit_message):
         subprocess.run(["git", "push", REMOTE_NAME],
                        cwd=STORAGE_DIR, check=True)
     except subprocess.CalledProcessError as e:
-        logger.error(f"Git operation failed with {e.returncode}: {e.cmd}")
-        logger.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
-        raise StorageError("Failed to save - see logs for details") from e
+        if not no_error:
+            logger.error(f"Git operation failed with {e.returncode}: {e.cmd}")
+            raise StorageError("Failed to save - see logs for details") from e
 
 
 def sync():
     # Flush lazily committed data first
-    try:
-        commit("Flush lazily committed data")
-    except StorageError:
-        # Nothing to commit, no problem.
-        pass
+    commit("Flush lazily committed data", no_error=True)
 
     try:
         subprocess.run(["git", "fetch", REMOTE_NAME],
@@ -186,6 +182,5 @@ def sync():
         logger.info("Cleared User cache")
     except subprocess.CalledProcessError as e:
         logger.error(f"Git operation failed with {e.returncode}: {e.cmd}")
-        logger.debug(f"Git output:\nSTDOUT:\n{e.output}\nSTDERR:\n{e.stderr}")
         logger.error("Failed to synchronize with remote")
         raise StorageError("Failed to sync - see logs for details") from e
