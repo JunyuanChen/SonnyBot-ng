@@ -31,11 +31,55 @@ bot = botutils.setup_bot()
 STORAGE_LOCK = threading.Lock()
 
 
+async def change_exp_subtask(ctx, user, amount):
+    """
+    Change user's EXP by amount.
+
+    This function handles level change, associated coin changes, and
+    associated chat announcements.
+
+    When a user's EXP changes, they may upgrade to a higher level or
+    downgrade to a lower level.  Correspondingly, they will receive or
+    lose some coins, and a chat message will be sent, announcing the
+    upgrade or downgrade.
+    """
+    old_level = user.level
+    user.level, user.exp = calc_exp.recalc_level_and_exp(
+        user.level, user.exp, amount)
+    if user.level == -1:
+        # User's level and EXP is insufficient for the change.
+        # Operation should be cancelled.
+        #
+        # Example: old level = 0, old exp = 5, amount = -100
+        #
+        # NOTE Do NOT assert user.level > -1 here, since it will raise
+        # "hidden" AssertionError (i.e. it is not obvious that this
+        # function will raise AssertionError).  Better make it explicit
+        # in parent function.  Example:
+        # try:
+        #     await change_exp_subtask(ctx, user, -100)
+        #     assert user.level > -1  # (1) Assert HERE
+        # except AssertionError:
+        #     # Now it is obvious this error comes from (1)
+        return
+    if user.level > old_level:
+        coins = calc_coins.level_up_award(old_level, user.level)
+        user.coins += coins
+        await ctx.send(f"<@{user.id}> upgraded to Lvl. {user.level} "
+                       f"and was awarded {coins} coins!")
+    elif user.level < old_level:
+        coins = calc_coins.level_up_award(user.level, old_level)
+        coins = min(coins, user.coins)
+        user.coins -= coins
+        await ctx.send(f"<@{user.id}> downgraded to Lvl. "
+                       f"{user.level} and lost {coins} coins!")
+
+
 @bot.command()
 async def stat(ctx, user_id=None):
     logger.debug("[Command] stat {user_id}")
     if user_id is None:
-        user_id = ctx.author.id
+        user_id = ctx.message.author.id
     else:
         extracted = botutils.extract_id(user_id)
         if extracted != -1:
@@ -100,25 +144,8 @@ async def changeEXP(ctx, user_id, amount):
         try:
             amount = int(amount)
             user = storage.User.load(user_id)
-            logger.debug(f"changeEXP: Old level: {user.level}")
-            logger.debug(f"changeEXP: Old EXP: {user.exp}")
-            old_level = user.level
-            user.level, user.exp = calc_exp.recalc_level_and_exp(
-                user.level, user.exp, amount)
+            await change_exp_subtask(ctx, user, amount)
             assert user.level > -1
-            logger.debug(f"changeEXP: New level: {user.level}")
-            logger.debug(f"changeEXP: New EXP: {user.exp}")
-            if user.level > old_level:
-                coins = calc_coins.level_up_award(old_level, user.level)
-                user.coins += coins
-                await ctx.send(f"<@{user_id}> upgraded to Lvl. {user.level} "
-                               f"and was awarded {coins} coins!")
-            elif user.level < old_level:
-                coins = calc_coins.level_up_award(user.level, old_level)
-                coins = min(coins, user.coins)
-                user.coins -= coins
-                await ctx.send(f"<@{user_id}> downgraded to Lvl. "
-                               f"{user.level} and lost {coins} coins!")
             user.save()
             storage.commit(f"Change EXP for user {user_id}: {amount}")
             await ctx.send(f"<@{user_id}>'s EXP has been updated by {amount}!")
