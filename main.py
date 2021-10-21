@@ -5,8 +5,10 @@ import io
 import os
 import threading
 
+import discord
+import discord.ext.commands
+
 import logger
-import botutils
 import storage
 
 from concerns import (
@@ -25,11 +27,19 @@ logger.LOGGERS = [
 ]
 
 
-bot = botutils.setup_bot()
+intents = discord.Intents.default()
+intents.persences = True
+intents.members = True
+bot = discord.ext.commands.Bot(command_prefix=".",
+                               intents=intents,
+                               help_command=None)
 
 
 # Storage access must be serialized
 STORAGE_LOCK = threading.Lock()
+
+
+require_admin = discord.ext.commands.has_permissions(administrator=True)
 
 
 async def change_exp_subtask(ctx, user, amount):
@@ -76,24 +86,23 @@ async def change_exp_subtask(ctx, user, amount):
 
 
 @bot.command()
-@botutils.with_optional_user_id_arg
-async def stat(ctx, user_id):
-    member = ctx.guild.get_member(user_id)
+async def stat(ctx, member: discord.Member = None):
+    member = ctx.message.author if member is None else member
     avatar = io.BytesIO(await member.avatar_url_as(size=128).read())
 
     with STORAGE_LOCK:
         try:
-            user = storage.User.load(user_id)
+            user = storage.User.load(member.id)
             users = storage.User.all()
             rank = calc_exp.rank_users(users).index(user)
             stat_img = user_stat.draw_stat(
                 avatar, member.name, user.level, rank + 1,
                 user.exp, user.coins, user.msg_count
             )
-            await ctx.send(file=botutils.File(stat_img))
+            await ctx.send(file=discord.File(stat_img))
             os.unlink(stat_img)
         except KeyError:
-            await ctx.send(f"User <@{user_id}> not found!")
+            await ctx.send(f"User <@{member.id}> not found!")
 
 
 @bot.command()
@@ -111,196 +120,167 @@ async def leaderboard(ctx):
             usernames.append(member.name)
             levels.append(user.level)
         img = user_stat.leaderboard(avatars, usernames, levels)
-        await ctx.send(file=botutils.File(img))
+        await ctx.send(file=discord.File(img))
         os.unlink(leaderboard)
 
 
 @bot.command()
-@botutils.require_admin
-@botutils.with_user_id_arg
-async def removeUser(ctx, user_id):
+@require_admin
+async def removeUser(ctx, member: discord.Member):
     with STORAGE_LOCK:
         try:
-            storage.User.load(user_id).destroy()
-            await ctx.send(f"User <@{user_id}> has been deleted")
+            storage.User.load(member.id).destroy()
+            reply = f"User <@{member.id}> has been deleted!"
         except KeyError:
-            logger.debug(f"removeUser: User {user_id} not found")
-            await ctx.send(f"User <@{user_id}> not found!")
+            logger.debug(f"removeUser: User {member.id} not found")
+            reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
-            await ctx.send(str(e))
+            reply = str(e)
+    await ctx.send(reply)
 
 
 @bot.command()
-@botutils.require_admin
-@botutils.with_user_id_arg
-async def changeEXP(ctx, user_id, amount):
+@require_admin
+async def changeEXP(ctx, member: discord.Member, amount: int):
     with STORAGE_LOCK:
         try:
-            amount = int(amount)
-            user = storage.User.load(user_id)
+            user = storage.User.load(member.id)
             await change_exp_subtask(ctx, user, amount)
             assert user.level > -1
             user.save()
-            storage.commit(f"Change EXP for user {user_id}: {amount}")
-            await ctx.send(f"<@{user_id}>'s EXP has been updated by {amount}!")
-        except ValueError:
-            logger.debug(f"changeEXP: Bad amount: {amount}")
-            await ctx.send(f"Amount {amount} must be an integer!")
+            storage.commit(f"Change EXP of User {member.id} by {amount}")
+            reply = f"<@{member.id}>'s EXP has been updated by {amount}!"
         except AssertionError:
-            logger.debug("changeEXP: Not enough EXP")
-            await ctx.send(f"<@{user_id}> does not have enough EXP!")
+            reply = f"<@{member.id}> does not have enough EXP!"
         except KeyError:
-            logger.debug(f"changeEXP: User {user_id} not found")
-            await ctx.send(f"User <@{user_id}> not found!")
+            reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
-            await ctx.send(str(e))
+            reply = str(e)
+    await ctx.send(reply)
 
 
 @bot.command()
-@botutils.require_admin
-@botutils.with_user_id_arg
-async def changeCoins(ctx, user_id, amount):
+@require_admin
+async def changeCoins(ctx, member: discord.Member, amount: int):
     with STORAGE_LOCK:
         try:
-            amount = int(amount)
-            user = storage.User.load(user_id)
-            logger.debug(f"changeCoins: Old coins: {user.coins}")
+            user = storage.User.load(member.id)
             user.coins += amount
-            logger.debug(f"changeCoins: New coins: {user.coins}")
             assert user.coins >= 0
             user.save()
-            storage.commit(f"Change coins for user {user_id}: {amount}")
-            await ctx.send(f"<@{user_id}>'s coin count has been "
-                           f"updated by {amount} coin(s)!")
-        except ValueError:
-            logger.debug(f"changeCoins: Bad amount: {amount}")
-            await ctx.send(f"Amount {amount} must be an integer!")
+            storage.commit(f"Change coins of User {member.id} by {amount}")
+            reply = f"<@{member.id}>'s coins has been updated by {amount}!"
         except AssertionError:
-            logger.debug("changeCoins: Not enough coins")
-            await ctx.send(f"<@{user_id} does not have enough coins!")
+            reply = f"<@{member.id}> does not have enough coins!"
         except KeyError:
-            logger.debug(f"changeCoins: User {user_id} not found")
-            await ctx.send(f"User <@{user_id}> not found!")
+            reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
-            await ctx.send(str(e))
+            reply = str(e)
+    await ctx.send(reply)
 
 
 @bot.command()
-@botutils.require_admin
-@botutils.with_user_id_arg
-async def changeMessageSent(ctx, user_id, amount):
+@require_admin
+async def changeMessageSent(ctx, member: discord.Member, amount: int):
     with STORAGE_LOCK:
         try:
-            amount = int(amount)
-            user = storage.User.load(user_id)
+            user = storage.User.load(member.id)
             user.msg_count += amount
             assert user.msg_count >= 0
             user.save()
-            storage.commit("Change message count for "
-                           f"user {user_id}: {amount}")
-            await ctx.senf(f"<@{user_id}>'s message count "
-                           f"has been updated by {amount}")
-        except ValueError:
-            await ctx.send(f"Amount {amount} must be an integer!")
+            storage.commit(f"Change message count of "
+                           f"User {member.id} by {amount}")
+            reply = (f"<@{member.id}>'s message count "
+                     f"has been updated by {amount}!")
         except AssertionError:
-            await ctx.send(f"<@{user_id}>'s message count can't negative!")
+            reply = f"<@{member.id}>'s message count can't be negative!"
         except KeyError:
-            await ctx.send(f"User <@{user_id}> not found!")
+            reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
-            await ctx.send(str(e))
+            reply = str(e)
+    await ctx.send(reply)
 
 
 @bot.command()
-@botutils.with_user_id_arg
-async def transactCoins(ctx, user_id, amount):
+async def transactCoins(ctx, member: discord.Member, amount: int):
     """ Transact amount to user_id. """
-    sender_id = ctx.message.author.id
-    logger.debug(f"transactCoins: {sender_id} --({amount})--> {user_id}")
+    author = ctx.message.author
+    logger.debug(f"transactCoins: {author.id} --({amount})--> {member.id}")
     with STORAGE_LOCK:
         try:
             amount = int(amount)
             assert amount > 0
-            sender = storage.User.load(sender_id)
-            receiver = storage.User.load(user_id)
-            logger.debug(f"transactCoins: Sender Old: {sender.coins}")
-            logger.debug(f"transactCoins: Receiver Old: {receiver.coins}")
+            sender = storage.User.load(author.id)
+            receiver = storage.User.load(member.id)
             sender.coins -= amount
             receiver.coins += amount
             assert sender.coins >= 0
-            logger.debug(f"transactCoins: Sender New: {sender.coins}")
-            logger.debug(f"transactCoins: Receiver New: {receiver.coins}")
             sender.save()
             receiver.save()
             storage.commit(f"Transact {amount} coins from "
-                           f"user {sender.id} to {receiver.id}")
-            await ctx.send(f"<@{sender.id}> successfully transacted "
-                           f"{amount} to <@{receiver.id}>!")
-        except ValueError:
-            logger.debug(f"transactCoins: Bad amount: {amount}")
-            await ctx.send(f"Amount {amount} must be an integer!")
+                           f"User {sender.id} to User {receiver.id}")
+            reply = (f"<@{sender.id}> successfully transacted "
+                     f"{amount} coins to <@{receiver.id}>!")
         except AssertionError:
             if amount <= 0:
-                logger.debug("transactCoins: Negative or zero count")
-                await ctx.send(f"<@{sender.id}>, amount must be positive!")
+                reply = f"<@{sender.id}>, amount must be positive!"
             else:
-                logger.debug("transactCoins: Not enough coins")
-                await ctx.send(f"<@{sender.id}>, you don't have enough coins!")
+                reply = f"<@{sender.id}>, you don't have enough coins!"
         except KeyError:
-            logger.debug(f"transactCoins: User {user_id} not found")
-            await ctx.send(f"User <@{user_id}> not found!")
+            reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
-            await ctx.send(str(e))
+            reply = str(e)
+    await ctx.send(reply)
 
 
 @bot.command()
-@botutils.require_admin
-@botutils.with_user_id_arg
-async def resetUserStat(ctx, user_id):
+@require_admin
+async def resetUserStat(ctx, member: discord.Member):
     with STORAGE_LOCK:
         try:
-            user = storage.User.load(user_id)
+            user = storage.User.load(member.id)
             user.exp = 0
             user.level = 0
             user.coins = 0
             user.msg_count = 0
             user.save()
-            storage.commit(f"Reset stat for user {user_id}")
-            await ctx.send(f"<@{user_id}>'s stats are reset! "
-                           "(CCC progress not included)")
+            storage.commit(f"Reset stat for User {member.id}")
+            reply = (f"<@{member.id}>'s stats are reset! "
+                     f"(CCC progress not included)")
         except KeyError:
-            logger.debug(f"resetUserStat: User {user_id} not found")
-            await ctx.send(f"User <@{user_id}> not found!")
+            reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
-            await ctx.send(str(e))
+            reply = str(e)
+    await ctx.send(reply)
 
 
 @bot.command()
-async def connectDMOJAccount(ctx, username):
-    user_id = ctx.message.author.id
+async def connectDMOJAccount(ctx, username: str):
+    author = ctx.message.author
     with STORAGE_LOCK:
         try:
-            user = storage.User.load(user_id)
+            user = storage.User.load(author.id)
             assert user.dmoj_username is None
             rewards = dmoj.connect(user, username)
             if rewards is None:
-                await ctx.send(f"<@{user_id}>, cannot connect DMOJ Account "
+                await ctx.send(f"<@{author.id}>, cannot connect DMOJ Account "
                                f"{username}! Please ensure the account exists "
-                               "and finish at least 1 CCC problem.")
+                               "and have finished at least 1 CCC problem.")
                 return
             exp_reward, coin_reward = rewards
             await change_exp_subtask(ctx, user, exp_reward)
             if coin_reward:
                 user.coins += coin_reward
-                await ctx.send(f"<@{user_id}> earned {coin_reward} coins!")
+                await ctx.send(f"<@{author.id}> earned {coin_reward} coins!")
             user.save()
-            storage.commit(f"Connect User {user_id} to DMOJ {username}")
-            await ctx.send(f"<@{user_id}>, you have successfully "
+            storage.commit(f"Connect User {author.id} to DMOJ {username}")
+            await ctx.send(f"<@{author.id}>, you have successfully "
                            f"connected to DMOJ Account {username}!")
         except KeyError:
-            await ctx.send(f"User <@{user_id}> not found!")
+            await ctx.send(f"User <@{author.id}> not found!")
         except AssertionError:
-            await ctx.send(f"<@{user_id}>, you have already connected to "
-                           f"a DMOJ Account ({user.dmoj_username})!")
+            await ctx.send(f"<@{author.id}>, you have already connected "
+                           f"to a DMOJ Account ({user.dmoj_username})!")
         except dmoj.RequestException as e:
             logger.error(f"{type(e).__name__}: {e}")
             await ctx.send("Network errors encountered - see logs for details")
@@ -309,38 +289,38 @@ async def connectDMOJAccount(ctx, username):
 
 
 @bot.command()
-@botutils.with_optional_user_id_arg
-async def getDMOJAccount(ctx, user_id):
+async def getDMOJAccount(ctx, member: discord.Member = None):
+    member = ctx.message.author if member is None else member
     with STORAGE_LOCK:
         try:
-            user = storage.User.load(user_id)
+            user = storage.User.load(member.id)
             if user.dmoj_username is None:
-                await ctx.send(f"<@{user_id}>, you don't have a "
-                               "DMOJ Account connected!")
+                await ctx.send(f"<@{member.id}>, you don't have "
+                               "any DMOJ Account connected!")
             else:
-                await ctx.send(f"<@{user_id}>, your DMOJ Account "
+                await ctx.send(f"<@{member.id}>, your DMOJ Account "
                                f"is {user.dmoj_username}!")
         except KeyError:
-            await ctx.send(f"User <@{user_id}> not found!")
+            await ctx.send(f"User <@{member.id}> not found!")
 
 
 @bot.command()
-@botutils.with_optional_user_id_arg
-async def fetchCCCProgress(ctx, user_id):
+async def fetchCCCProgress(ctx, member: discord.Member = None):
+    member = ctx.message.author if member is None else member
     with STORAGE_LOCK:
         try:
-            user = storage.User.load(user_id)
+            user = storage.User.load(member.id)
             exp_reward, coin_reward = dmoj.update(user)
             await change_exp_subtask(ctx, user, exp_reward)
             if coin_reward:
                 user.coins += coin_reward
-                await ctx.send(f"<@{user_id}> earned {coin_reward} coins!")
+                await ctx.send(f"<@{member.id}> earned {coin_reward} coins!")
             user.save()
-            storage.commit(f"Update CCC progress for User {user_id}",
+            storage.commit(f"Update CCC progress for User {member.id}",
                            no_error=True)
-            await ctx.send(f"<@{user_id}>, your CCC progress is updated!")
+            await ctx.send(f"<@{member.id}>, your CCC progress is updated!")
         except KeyError:
-            await ctx.send(f"User <@{user_id}> not found!")
+            await ctx.send(f"User <@{member.id}> not found!")
         except dmoj.RequestException as e:
             logger.error(f"{type(e).__name__}: {e}")
             await ctx.send("Network errors encountered - see logs for details")
@@ -349,7 +329,7 @@ async def fetchCCCProgress(ctx, user_id):
 
 
 @bot.command()
-@botutils.require_admin
+@require_admin
 async def syncData(ctx):
     logger.debug("[Command] syncData")
     with STORAGE_LOCK:
