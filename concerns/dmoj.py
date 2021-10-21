@@ -47,7 +47,8 @@ def update(user):
 
 
 def update_ccc(user, ccc):
-    reward = 0
+    exp_reward = 0
+    coin_reward = 0
     for problem, percentage in ccc.items():
         if problem in user.ccc_progress:
             old_percentage = user.ccc_progress[problem]
@@ -56,7 +57,7 @@ def update_ccc(user, ccc):
         if old_percentage < percentage:
             user.ccc_progress[problem] = percentage
             # TODO Reward user some exp
-    return reward
+    return exp_reward, coin_reward
 
 
 RequestException = requests.exceptions.RequestException

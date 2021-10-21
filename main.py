@@ -281,18 +281,21 @@ async def connectDMOJAccount(ctx, username):
         try:
             user = storage.User.load(user_id)
             assert user.dmoj_username is None
-            award = dmoj.connect(user, username)
-            if award is None:
+            rewards = dmoj.connect(user, username)
+            if rewards is None:
                 await ctx.send(f"<@{user_id}>, cannot connect DMOJ Account "
                                f"{username}! Please ensure the account exists "
                                "and finish at least 1 CCC problem.")
-            else:
-                await change_exp_subtask(ctx, user, award)
-                user.save()
-                storage.commit(f"Connect DMOJ Account {username} "
-                               f"to User {user_id}")
-                await ctx.send(f"<@{user_id}>, you have successfully "
-                               f"connected to DMOJ Account {username}!")
+                return
+            exp_reward, coin_reward = rewards
+            await change_exp_subtask(ctx, user, exp_reward)
+            if coin_reward:
+                user.coins += coin_reward
+                await ctx.send(f"<@{user_id}> earned {coin_reward} coins!")
+            user.save()
+            storage.commit(f"Connect User {user_id} to DMOJ {username}")
+            await ctx.send(f"<@{user_id}>, you have successfully "
+                           f"connected to DMOJ Account {username}!")
         except KeyError:
             await ctx.send(f"User <@{user_id}> not found!")
         except AssertionError:
@@ -327,8 +330,11 @@ async def fetchCCCProgress(ctx, user_id):
     with STORAGE_LOCK:
         try:
             user = storage.User.load(user_id)
-            award = dmoj.update(user)
-            await change_exp_subtask(ctx, user, award)
+            exp_reward, coin_reward = dmoj.update(user)
+            await change_exp_subtask(ctx, user, exp_reward)
+            if coin_reward:
+                user.coins += coin_reward
+                await ctx.send(f"<@{user_id}> earned {coin_reward} coins!")
             user.save()
             storage.commit(f"Update CCC progress for User {user_id}",
                            no_error=True)
