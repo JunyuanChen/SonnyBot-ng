@@ -16,12 +16,14 @@ def api_for(username):
     return f"https://dmoj.ca/user/{quoted}/solved"
 
 
+CCC_DATA_XPATH = """
+//div[@class="user-problem-group"][contains(., "CCC")]/table/tbody/tr
+""".strip()
+
+
 def extract_ccc(content):
     result = {}
-    rows = lxml.html.document_fromstring(content).xpath(
-        '//div[@class="user-problem-group"][contains(., "CCC")]'
-        '/table/tbody/tr'
-    )
+    rows = lxml.html.document_fromstring(content).xpath(CCC_DATA_XPATH)
     for row in rows:
         problem_url = row.xpath('td[@class="problem-name"]/a/@href')[0]
         score_str = row.xpath('td[@class="problem-score"]/a/text()')[0]
