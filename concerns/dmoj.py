@@ -73,6 +73,7 @@ def reward(total_reward, percentage):
     And if percentage >= 0.5, then the weighed percentage is:
     0.2 + 0.8 * ((percentage - 0.5) / 0.5)) = 1.6 * percentage - 0.6
     """
+    percentage /= 100
     if percentage <= 0.5:
         weighed_percentage = 0.4 * percentage
     else:
