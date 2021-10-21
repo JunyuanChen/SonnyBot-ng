@@ -2,6 +2,8 @@
 
 """ DMOJ web scraping. """
 
+import json
+
 import requests
 import lxml.html
 
@@ -9,6 +11,10 @@ from concerns import (
     calc_exp,
     calc_coins
 )
+
+
+with open("assets/ccc.json", "r", encoding="utf-8") as f:
+    CCC_PROBLEMS = json.load(f)
 
 
 def api_for(username):
@@ -97,8 +103,9 @@ def update_ccc(user, ccc):
             old_percentage = 0
         if old_percentage < percentage:
             user.ccc_progress[problem] = percentage
-            total_exp = calc_exp.ccc_reward(problem.difficulty)
-            total_coins = calc_coins.ccc_reward(problem.difficulty)
+            difficulty = CCC_PROBLEMS[problem]["difficulty"]
+            total_exp = calc_exp.ccc_reward(difficulty)
+            total_coins = calc_coins.ccc_reward(difficulty)
             exp_reward += new_reward(total_exp, old_percentage, percentage)
             coin_reward += new_reward(total_coins, old_percentage, percentage)
     return exp_reward, coin_reward
