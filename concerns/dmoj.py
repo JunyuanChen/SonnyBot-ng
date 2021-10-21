@@ -5,6 +5,11 @@
 import requests
 import lxml.html
 
+from concerns import (
+    calc_exp,
+    calc_coins
+)
+
 
 def api_for(username):
     quoted = requests.utils.quote(username)
@@ -46,6 +51,40 @@ def update(user):
     return update_ccc(user, ccc)
 
 
+def reward(total_reward, percentage):
+    """
+    Reward for a problem with total_reward done to percentage.
+
+    Since the first a few test cases are generally very easy, a linear
+    approach will be unfair.  Thus, the reward is given in 20:80 ratio.
+    The first 50% gives 20% of the reward, and the last 50% gives 80%
+    of the reward.
+
+    Thus, if percentage <= 0.5, then the percentage of reward given is:
+    0.2 * (percentage / 0.5) = 0.4 * percentage
+    And if percentage >= 0.5, then the weighed percentage is:
+    0.2 + 0.8 * ((percentage - 0.5) / 0.5)) = 1.6 * percentage - 0.6
+    """
+    if percentage <= 0.5:
+        weighed_percentage = 0.4 * percentage
+    else:
+        weighed_percentage = 1.6 * percentage - 0.6
+    return round(total_reward * weighed_percentage)
+
+
+def new_reward(total_reward, old_percentage, new_percentage):
+    """
+    New reward eligible after completing the problem to new_percentage.
+
+    The user have already received some rewards.  Now they finished the
+    problem to a higher percentage, thus they will be eligible for some
+    new rewards.
+    """
+    old = reward(total_reward, old_percentage)
+    new = reward(total_reward, new_percentage)
+    return new - old
+
+
 def update_ccc(user, ccc):
     exp_reward = 0
     coin_reward = 0
@@ -56,7 +95,10 @@ def update_ccc(user, ccc):
             old_percentage = 0
         if old_percentage < percentage:
             user.ccc_progress[problem] = percentage
-            # TODO Reward user some exp
+            total_exp = calc_exp.ccc_reward(problem.difficulty)
+            total_coins = calc_coins.ccc_reward(problem.difficulty)
+            exp_reward += new_reward(total_exp, old_percentage, percentage)
+            coin_reward += new_reward(total_coins, old_percentage, percentage)
     return exp_reward, coin_reward
 
 

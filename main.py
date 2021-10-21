@@ -63,12 +63,12 @@ async def change_exp_subtask(ctx, user, amount):
         #     # Now it is obvious this error comes from (1)
         return
     if user.level > old_level:
-        coins = calc_coins.level_up_award(old_level, user.level)
+        coins = calc_coins.level_up_reward(old_level, user.level)
         user.coins += coins
         await ctx.send(f"<@{user.id}> upgraded to Lvl. {user.level} "
-                       f"and was awarded {coins} coins!")
+                       f"and was rewarded {coins} coins!")
     elif user.level < old_level:
-        coins = calc_coins.level_up_award(user.level, old_level)
+        coins = calc_coins.level_up_reward(user.level, old_level)
         coins = min(coins, user.coins)
         user.coins -= coins
         await ctx.send(f"<@{user.id}> downgraded to Lvl. "
