@@ -1,5 +1,33 @@
 # coding: utf-8
 
+"""
+Storage for user data.
+
+Ideally we should use SQLite3 database or something similar,
+but replit.com apparently causes committed data to disappear
+randomly, which is totally unacceptable.
+
+This is an attempt to workaround this replit.com issue, by
+storing data in a git repository and pushing to GitHub.
+Obviously, GitHub's storage is pretty reliable, since none
+of my code on GitHub is disappearing.
+
+To keep git happy, we choose to use text format JSON to
+serialize data, instead of a binary blob.  We also have one
+file for each user, instead of a single huge file.  This
+will give us smaller commit/delta, and usable diffs.
+
+Each user's data is serialized to a JSON file, {id}.json,
+where id is the user's Discord ID.  All these JSON files are
+stored in a git repository at {STORAGE_DIR} ("data repo").
+The data repo have a remote named {REMOTE_NAME}, pointing to
+GitHub.
+
+If replit.com messes up our data, sync() will fetch remote
+{REMOTE_NAME} (i.e. GitHub), and then switch to it.  All
+local changes caused by replit.com are discarded.
+"""
+
 import os
 import copy
 import json
