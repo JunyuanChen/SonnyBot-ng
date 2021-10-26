@@ -295,12 +295,8 @@ async def getDMOJAccount(ctx, member: discord.Member = None):
     with STORAGE_LOCK:
         try:
             user = storage.User.load(member.id)
-            if user.dmoj_username is None:
-                await ctx.send(f"<@{member.id}>, you don't have "
-                               "any DMOJ Account connected!")
-            else:
-                await ctx.send(f"<@{member.id}>, your DMOJ Account "
-                               f"is {user.dmoj_username}!")
+            name = user.dmoj_username
+            await ctx.send(f"<@{member.id}>, your DMOJ Account is: {name}!")
         except KeyError:
             await ctx.send(f"User <@{member.id}> not found!")
 
