@@ -103,6 +103,7 @@ async def stat(ctx, member: discord.Member = None):
             )
             await ctx.send(file=discord.File(stat_img))
             os.unlink(stat_img)
+            storage.flush()  # Checkpoint
         except KeyError:
             await ctx.send(f"User <@{member.id}> not found!")
 
@@ -242,7 +243,7 @@ async def resetUserStat(ctx, member: discord.Member):
             user.coins = 0
             user.msg_count = 0
             user.save()
-            storage.commit(f"Reset stat for User {member.id}")
+            storage.commit(f"Reset stat for User {member.id}", no_error=True)
             reply = (f"<@{member.id}>'s stats are reset! "
                      f"(CCC progress not included)")
         except KeyError:

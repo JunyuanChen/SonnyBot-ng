@@ -201,10 +201,18 @@ def commit(commit_message, no_error=False):
             raise StorageError("Failed to save - see logs for details") from e
 
 
-def sync():
-    # Flush lazily committed data first
+def flush():
+    """
+    Flush lazily committed data.
+
+    To reduce commit count, sometimes we just save without calling
+    commit().  This function will commit these uncommitted changes.
+    """
     commit("Flush lazily committed data", no_error=True)
 
+
+def sync():
+    flush()
     try:
         subprocess.run(["git", "fetch", REMOTE_NAME],
                        cwd=STORAGE_DIR, check=True)
