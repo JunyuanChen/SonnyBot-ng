@@ -91,7 +91,6 @@ async def change_exp_subtask(ctx, user, amount):
 @bot.command()
 async def stat(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
-    avatar = io.BytesIO(await member.avatar_url_as(size=128).read())
 
     with STORAGE_LOCK:
         try:
@@ -99,8 +98,8 @@ async def stat(ctx, member: discord.Member = None):
             users = storage.User.all()
             rank = calc_exp.rank_users(users).index(user)
             stat_img = user_stat.draw_stat(
-                avatar, member.name, user.level, rank + 1,
-                user.exp, user.coins, user.msg_count
+                await chat.get_avatar(member), member.name, user.level,
+                rank + 1, user.exp, user.coins, user.msg_count
             )
             await ctx.send(file=discord.File(stat_img))
             os.unlink(stat_img)
@@ -113,18 +112,14 @@ async def leaderboard(ctx):
     with STORAGE_LOCK:
         users = storage.User.all()
         top_10 = calc_exp.rank_users(users)[:10]
-        avatars = []
-        usernames = []
-        levels = []
-        for user in top_10:
-            member = ctx.guild.get_member(user.id)
-            avatar_data = member.avatar_url_as(size=128)
-            avatars.append(io.BytesIO(await avatar_data.read()))
-            usernames.append(member.name)
-            levels.append(user.level)
-        img = user_stat.leaderboard(avatars, usernames, levels)
-        await ctx.send(file=discord.File(img))
-        os.unlink(leaderboard)
+        top_10_as_member = [ctx.guild.get(u.id) for u in top_10]
+        leaderboard_img = user_stat.leaderboard(
+            [await chat.get_avatar(m) for m in top_10_as_member],
+            [m.name for m in top_10_as_member],
+            [u.level for u in top_10]
+        )
+        await ctx.send(file=discord.File(leaderboard_img))
+        os.unlink(leaderboard_img)
 
 
 @bot.command()

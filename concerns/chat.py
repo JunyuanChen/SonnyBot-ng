@@ -2,6 +2,8 @@
 
 """ Discord-related. """
 
+import io
+
 import logger
 
 
@@ -14,3 +16,8 @@ def bot_channel(server):
         return 893224522763878460
     logger.warn(f"Unknown Discord server: {server}")
     return -1
+
+
+async def get_avatar(member):
+    avatar = member.avatar_url_as(size=128)
+    return io.BytesIO(await avatar.read())
