@@ -66,8 +66,10 @@ def draw_stat(avatar, username, level, rank, exp_current, coins, msg_count):
     canvas.text((747, 152), msg_text, font=KARLA_22, fill=(10, 74, 8, 1))
     canvas.text((745, 150), msg_text, font=KARLA_22, fill=(255, 255, 255, 1))
 
-    filename = tempfile.mkstemp(suffix=".png")[1]
+    filename, fd = tempfile.mkstemp(suffix=".png")
+    fd.close()
     template.save(filename)
+    template.close()
     return filename
 
 
@@ -97,7 +99,8 @@ def leaderboard(avatars, usernames, levels):
         canvas.text((175, 113 + offset_y), username, font=UBUNTU_31)
         canvas.text((565, 115 + offset_y), f"Level: {level}", font=UBUNTU_25)
 
-    filename = tempfile.mkstemp(suffix=".png")
+    filename, fd = tempfile.mkstemp(suffix=".png")
+    fd.close()
     template.save(filename)
     template.close()
     return filename
