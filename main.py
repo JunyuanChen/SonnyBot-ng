@@ -101,7 +101,9 @@ async def stat(ctx, member: discord.Member = None):
                 await chat.get_avatar(member), member.name, user.level,
                 rank + 1, user.exp, user.coins, user.msg_count
             )
-            await ctx.send(file=discord.File(stat_img))
+            img_file = discord.File(stat_img)
+            await ctx.send(file=img_file)
+            img_file.close()
             os.unlink(stat_img)
             storage.flush()  # Checkpoint
         except KeyError:
@@ -119,7 +121,9 @@ async def leaderboard(ctx):
             [m.name for m in top_10_as_member],
             [u.level for u in top_10]
         )
-        await ctx.send(file=discord.File(leaderboard_img))
+        img_file = discord.File(leaderboard_img)
+        await ctx.send(file=img_file)
+        img_file.close()
         os.unlink(leaderboard_img)
 
 
