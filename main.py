@@ -372,7 +372,7 @@ async def on_message(message: discord.Message):
         try:
             storage.commit(f"Upgrade User {user.id} to Lvl. {user.level}")
         except storage.StorageError as e:
-            channel.send(str(e))
+            await channel.send(str(e))
 
     await bot.process_commands(message)
 
