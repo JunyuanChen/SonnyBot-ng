@@ -342,6 +342,11 @@ async def syncData(ctx):
 
 
 @bot.event
+async def on_ready():
+    logger.info(f"Logged in as {bot.user}")
+
+
+@bot.event
 async def on_member_join(member: discord.Member):
     server = member.guild.name
     channel = bot.get_channel(chat.bot_channel(server))
