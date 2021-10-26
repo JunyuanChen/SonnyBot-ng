@@ -74,7 +74,7 @@ def ccc_reward(difficulty):
     return round(base * scale * 1000)
 
 
-def chag_msg_reward(content):
+def chat_msg_reward(content):
     """ EXP rewarded when sending chat messages. """
     num_words = len(content.strip().split())
     lower = num_words // 2
