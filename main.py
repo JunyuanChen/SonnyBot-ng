@@ -259,17 +259,20 @@ async def connectDMOJAccount(ctx, username: str):
         try:
             user = storage.User.load(author.id)
             assert user.dmoj_username is None
+
             rewards = dmoj.connect(user, username)
             if rewards is None:
                 await ctx.send(f"<@{author.id}>, cannot connect DMOJ Account "
                                f"{username}! Please ensure the account exists "
-                               "and have finished at least 1 CCC problem.")
+                               f"and have finished at least 1 CCC problem.")
                 return
+
             exp_reward, coin_reward = rewards
             await change_exp_subtask(ctx, user, exp_reward)
             if coin_reward:
                 user.coins += coin_reward
                 await ctx.send(f"<@{author.id}> earned {coin_reward} coins!")
+
             user.save()
             storage.commit(f"Connect User {author.id} to DMOJ {username}")
             await ctx.send(f"<@{author.id}>, you have successfully "
