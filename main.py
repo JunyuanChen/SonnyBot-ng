@@ -15,7 +15,8 @@ from concerns import (
     user_stat,
     calc_exp,
     calc_coins,
-    dmoj
+    dmoj,
+    chat
 )
 
 
@@ -338,6 +339,14 @@ async def syncData(ctx):
             await ctx.send("Successfully synced to remote!")
         except storage.StorageError as e:
             await ctx.send(str(e))
+
+
+@bot.event
+async def on_member_join(member: discord.Member):
+    server = member.guild.name
+    channel = bot.get_channel(chat.bot_channel(server))
+    storage.User.load_or_create(member.id)
+    await channel.send(f"User <@{member.id}> has joined the server!")
 
 
 if __name__ == '__main__':
