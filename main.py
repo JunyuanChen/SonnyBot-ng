@@ -327,6 +327,44 @@ async def fetchCCCProgress(ctx, member: discord.Member = None):
 
 @bot.command()
 @require_admin
+async def mute(ctx, member: discord.Member, reason=None):
+    role = discord.utils.get(ctx.guild.roles, name="Muted")
+    if not role:
+        role = await ctx.guild.create_role(name="Muted")
+        for channel in ctx.guild.channels:
+            await channel.set_permissions(role, speak=False, send_messages=False)
+
+    await member.add_roles(role)
+    await ctx.send(f"<@{member.id}> was muted by <@{ctx.message.author.id}>. "
+                   f"Reason: {reason}")
+
+
+@bot.command()
+@require_admin
+async def unmute(ctx, member: discord.Member):
+    role = discord.utils.get(ctx.guild.roles, name = "Muted")
+    await member.remove_roles(role)
+    await ctx.send(f"<@{member.id}> is now unmuted")
+
+
+@bot.command()
+@require_admin
+async def addRole(ctx, member: discord.Member, role_name):
+    role = discord.utils.get(ctx.guild.roles, name=role_name)
+    if not role:
+        await ctx.guild.create_role(name=role_name)
+    await member.add_roles(role)
+
+
+@bot.command()
+@require_admin
+async def removeRole(ctx, member: discord.Member, role_name):
+    role = discord.utils.get(ctx.guild.roles, name=role_name)
+    await member.remove_roles(role)
+
+
+@bot.command()
+@require_admin
 async def syncData(ctx):
     logger.debug("[Command] syncData")
     with STORAGE_LOCK:
