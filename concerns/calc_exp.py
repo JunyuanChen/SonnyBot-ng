@@ -22,6 +22,8 @@ below user's level.  This is the total number of EXP deducted from the
 user for levelling up.  Adding them back to EXP gives total EXP.
 """
 
+import random
+
 
 def exp_requirement(level):
     """ EXP required to level up from level. """
@@ -70,3 +72,11 @@ def ccc_reward(difficulty):
     base = difficulty - 2
     scale = 1.1 ** (difficulty - 3)
     return round(base * scale * 1000)
+
+
+def chag_msg_reward(content):
+    """ EXP rewarded when sending chat messages. """
+    num_words = len(content.strip().split())
+    lower = num_words // 2
+    upper = num_words + num_words // 2
+    return random.randint(lower, upper)

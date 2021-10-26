@@ -78,12 +78,15 @@ async def change_exp_subtask(ctx, user, amount):
         user.coins += coins
         await ctx.send(f"<@{user.id}> upgraded to Lvl. {user.level} "
                        f"and was rewarded {coins} coins!")
-    elif user.level < old_level:
+        return True
+    if user.level < old_level:
         coins = calc_coins.level_up_reward(user.level, old_level)
         coins = min(coins, user.coins)
         user.coins -= coins
         await ctx.send(f"<@{user.id}> downgraded to Lvl. "
                        f"{user.level} and lost {coins} coins!")
+        return False
+    return None
 
 
 @bot.command()
@@ -344,6 +347,35 @@ async def syncData(ctx):
 @bot.event
 async def on_ready():
     logger.info(f"Logged in as {bot.user}")
+
+
+@bot.event
+async def on_message(message: discord.Message):
+    if message.author.id == bot.user.id:
+        # This message is sent by bot itself, ignore it.
+        return
+
+    server = message.guild.name
+    channel = bot.get_channel(chat.bot_channel(server))
+
+    user = storage.User.load_or_create(message.author.id)
+    exp_reward = calc_exp.chat_msg_reward(message.content)
+    upgraded = await change_exp_subtask(channel, user, exp_reward)
+    user.save()
+    # NOTE No commit here, because we do NOT want commits for every
+    # single message.  Instead, user.save() will save data to disk.
+    # Later, they will be bundled into the next commit, or flushed as
+    # part of sync().  Obviously, user._snap will be updated as well.
+
+    # ... except if the user is upgraded.  In this case, we have made a
+    # chat announcement.  This is a checkpoint that occurs not as often.
+    if upgraded:
+        try:
+            storage.commit(f"Upgrade User {user.id} to Lvl. {user.level}")
+        except storage.StorageError as e:
+            channel.send(str(e))
+
+    await bot.process_commands(message)
 
 
 @bot.event
