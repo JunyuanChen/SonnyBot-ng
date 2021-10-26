@@ -99,4 +99,5 @@ def leaderboard(avatars, usernames, levels):
 
     filename = tempfile.mkstemp(suffix=".png")
     template.save(filename)
+    template.close()
     return filename
