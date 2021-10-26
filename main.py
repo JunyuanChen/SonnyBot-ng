@@ -28,12 +28,11 @@ logger.LOGGERS = [
 ]
 
 
-intents = discord.Intents.default()
-intents.persences = True
-intents.members = True
-bot = discord.ext.commands.Bot(command_prefix=".",
-                               intents=intents,
-                               help_command=None)
+bot = discord.ext.commands.Bot(
+    command_prefix=".",
+    intents=discord.Intents.all(),
+    help_command=None
+)
 
 
 # Storage access must be serialized
