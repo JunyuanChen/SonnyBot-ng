@@ -2,6 +2,7 @@
 
 """ Generate fancy user stat images. """
 
+import os
 import tempfile
 
 from PIL import Image, ImageDraw, ImageFont
@@ -66,8 +67,8 @@ def draw_stat(avatar, username, level, rank, exp_current, coins, msg_count):
     canvas.text((747, 152), msg_text, font=KARLA_22, fill=(10, 74, 8, 1))
     canvas.text((745, 150), msg_text, font=KARLA_22, fill=(255, 255, 255, 1))
 
-    filename, fd = tempfile.mkstemp(suffix=".png")
-    fd.close()
+    fd, filename = tempfile.mkstemp(suffix=".png")
+    os.close(fd)
     template.save(filename)
     template.close()
     return filename
@@ -99,8 +100,8 @@ def leaderboard(avatars, usernames, levels):
         canvas.text((175, 113 + offset_y), username, font=UBUNTU_31)
         canvas.text((565, 115 + offset_y), f"Level: {level}", font=UBUNTU_25)
 
-    filename, fd = tempfile.mkstemp(suffix=".png")
-    fd.close()
+    fd, filename = tempfile.mkstemp(suffix=".png")
+    os.close(fd)
     template.save(filename)
     template.close()
     return filename
