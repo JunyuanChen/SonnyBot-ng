@@ -329,6 +329,24 @@ async def fetchCCCProgress(ctx, member: discord.Member = None):
         except storage.StorageError as e:
             await ctx.send(str(e))
 
+@bot.command()
+async def CCCProgressList(ctx):
+    member = ctx.message.author
+    reply = ""
+    try:
+        user = storage.User.load(member.id)
+        for problem in dmoj.CCC_PROBLEMS:
+            if problem in user.ccc_progress:
+                reply += f"User has completed {user.ccc_progress[problem]}% of {dmoj.CCC_PROBLEMS[problem]['name']}\n"
+        await member.send(reply)
+        await ctx.send(f"<@{member.id}>, your progress list has been sent to your DMs")
+    except KeyError:
+        await ctx.send(f"User <@{member.id}> not found!")
+    except dmoj.RequestException as e:
+        logger.error(f"{type(e).__name__}: {e}")
+        await ctx.send("Network errors encountered - see logs for details")
+    except storage.StorageError as e:
+        await ctx.send(str(e))
 
 @bot.command()
 @require_admin
@@ -423,4 +441,4 @@ async def on_member_join(member: discord.Member):
 
 
 if __name__ == '__main__':
-    bot.run(os.environ["BotToken"])
+    bot.run('OTAyMTk0MDIzMDEwMjgzNTUz.YXa3qQ.Y88g1zLDB1rsvuU88fkCYh2xEI4')
