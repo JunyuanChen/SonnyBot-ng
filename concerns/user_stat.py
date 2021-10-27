@@ -42,7 +42,7 @@ def draw_stat(avatar, username, level, rank, exp_current, coins, msg_count):
     template = Image.open("assets/stat_template.png")
     avatar_img = Image.open(avatar).resize((128, 128))
     template.paste(avatar_img, (20, 10))
-    template.paste(AVATAR_MASK, (20, 10))
+    template.paste(AVATAR_MASK, (20, 10), AVATAR_MASK)
 
     canvas = ImageDraw.Draw(template)
     canvas.text((165, 30), username, font=FIRA_35)
