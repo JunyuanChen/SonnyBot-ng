@@ -443,5 +443,5 @@ async def on_member_join(member: discord.Member):
     await channel.send(f"User <@{member.id}> has joined the server!")
 
 
-if __name__ == '__main__':
-    bot.run('OTAyMTk0MDIzMDEwMjgzNTUz.YXa3qQ.YYDO5nNVvECpGh5T0ZfWGCCaZBw')
+if __name__ == "__main__":
+    bot.run(os.environ["BOT_TOKEN"])
