@@ -114,18 +114,18 @@ async def stat(ctx, member: discord.Member = None):
 async def leaderboard(ctx):
     with STORAGE_LOCK:
         users = storage.User.all()
-        top_10 = calc_exp.rank_users(users)[:10]
-        top_10_as_member = [ctx.guild.get_member(u.id) for u in top_10]
-        top_10 = [
-            top_10[i] for i in range(len(top_10))
-            if top_10_as_member[i] is not None
-        ]
-        top_10_as_member = [x for x in top_10_as_member if x is not None]
-        leaderboard_img = user_stat.leaderboard(
-            [await chat.get_avatar(m) for m in top_10_as_member],
-            [m.name for m in top_10_as_member],
-            [u.level for u in top_10]
-        )
+        avatars = []
+        names = []
+        levels = []
+        for user in calc_exp.rank_users(users):
+            member = ctx.guild.get_member(user.id)
+            if member is not None:
+                avatars.append(await chat.get_avatar(member))
+                names.append(member.name)
+                levels.append(user.level)
+                if len(names) == 10:
+                    break
+        leaderboard_img = user_stat.leaderboard(avatars, names, levels)
         img_file = discord.File(leaderboard_img)
         await ctx.send(file=img_file)
         img_file.close()
