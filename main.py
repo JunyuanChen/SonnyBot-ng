@@ -95,11 +95,15 @@ async def stat(ctx, member: discord.Member = None):
     with STORAGE_LOCK:
         try:
             user = storage.User.load(member.id)
-            users = storage.User.all()
-            rank = calc_exp.rank_users(users).index(user)
+            users = calc_exp.rank_users(storage.User.all())
+            rank = users.index(user)
+            ahead = [
+                x for x in users[:rank]
+                if ctx.guild.get_member(x) is not None
+            ]
             stat_img = user_stat.draw_stat(
                 await chat.get_avatar(member), member.name, user.level,
-                rank + 1, user.exp, user.coins, user.msg_count
+                len(ahead) + 1, user.exp, user.coins, user.msg_count
             )
             img_file = discord.File(stat_img)
             await ctx.send(file=img_file)
