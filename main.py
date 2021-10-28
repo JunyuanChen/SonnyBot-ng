@@ -116,6 +116,11 @@ async def leaderboard(ctx):
         users = storage.User.all()
         top_10 = calc_exp.rank_users(users)[:10]
         top_10_as_member = [ctx.guild.get_member(u.id) for u in top_10]
+        top_10 = [
+            top_10[i] for i in range(len(top_10))
+            if top_10_as_member[i] is not None
+        ]
+        top_10_as_member = [x for x in top_10_as_member if x is not None]
         leaderboard_img = user_stat.leaderboard(
             [await chat.get_avatar(m) for m in top_10_as_member],
             [m.name for m in top_10_as_member],
