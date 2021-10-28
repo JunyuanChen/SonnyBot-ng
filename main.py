@@ -361,6 +361,7 @@ async def mute(ctx, member: discord.Member, reason=None):
     await ctx.send(f"<@{member.id}> was muted by <@{ctx.message.author.id}>. "
                    f"Reason: {reason}")
 
+#testing
 
 @bot.command()
 @require_admin
