@@ -17,7 +17,7 @@ FIRA_24 = ImageFont.truetype("assets/fira_sans.ttf", 24)
 FIRA_35 = ImageFont.truetype("assets/fira_sans.ttf", 35)
 KARLA_22 = ImageFont.truetype("assets/karla.ttf", 22)
 KARLA_28 = ImageFont.truetype("assets/karla.ttf", 28)
-UBUNTU_25 = ImageFont.truetype("assets/ubuntu.ttf", 31)
+UBUNTU_25 = ImageFont.truetype("assets/ubuntu.ttf", 25)
 UBUNTU_31 = ImageFont.truetype("assets/ubuntu.ttf", 31)
 
 AVATAR_MASK = Image.open("assets/avatar_mask.png")

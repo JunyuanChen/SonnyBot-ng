@@ -117,9 +117,9 @@ async def leaderboard(ctx):
         top_10 = calc_exp.rank_users(users)[:10]
         top_10_as_member = [ctx.guild.get_member(u.id) for u in top_10]
         leaderboard_img = user_stat.leaderboard(
-            [await chat.get_avatar(m) for m in top_10_as_member if m != None],
-            [m.name for m in top_10_as_member if m != None],
-            [u.level for u in top_10 if u != None]
+            [await chat.get_avatar(m) for m in top_10_as_member],
+            [m.name for m in top_10_as_member],
+            [u.level for u in top_10]
         )
         img_file = discord.File(leaderboard_img)
         await ctx.send(file=img_file)
@@ -444,4 +444,4 @@ async def on_member_join(member: discord.Member):
 
 
 if __name__ == '__main__':
-    bot.run('OTAyMTk0MDIzMDEwMjgzNTUz.YXa3qQ.Y88g1zLDB1rsvuU88fkCYh2xEI4')
+    bot.run('OTAyMTk0MDIzMDEwMjgzNTUz.YXa3qQ.YYDO5nNVvECpGh5T0ZfWGCCaZBw')
