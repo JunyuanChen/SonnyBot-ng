@@ -115,11 +115,11 @@ async def leaderboard(ctx):
     with STORAGE_LOCK:
         users = storage.User.all()
         top_10 = calc_exp.rank_users(users)[:10]
-        top_10_as_member = [ctx.guild.get(u.id) for u in top_10]
+        top_10_as_member = [ctx.guild.get_member(u.id) for u in top_10]
         leaderboard_img = user_stat.leaderboard(
-            [await chat.get_avatar(m) for m in top_10_as_member],
-            [m.name for m in top_10_as_member],
-            [u.level for u in top_10]
+            [await chat.get_avatar(m) for m in top_10_as_member if m != None],
+            [m.name for m in top_10_as_member if m != None],
+            [u.level for u in top_10 if u != None]
         )
         img_file = discord.File(leaderboard_img)
         await ctx.send(file=img_file)
@@ -338,7 +338,9 @@ async def CCCProgressList(ctx):
         for problem in dmoj.CCC_PROBLEMS:
             if problem in user.ccc_progress:
                 reply += f"User has completed {user.ccc_progress[problem]}% of {dmoj.CCC_PROBLEMS[problem]['name']}\n"
-        await member.send(reply)
+                if(len(reply) >= 1500):
+                    await member.send(reply)
+                    reply = ""
         await ctx.send(f"<@{member.id}>, your progress list has been sent to your DMs")
     except KeyError:
         await ctx.send(f"User <@{member.id}> not found!")
