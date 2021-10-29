@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import io
 import os
-import threading
 
 import discord
 import discord.ext.commands
 
 import logger
 import storage
+import timer
 
 from concerns import (
     user_stat,
@@ -21,6 +20,7 @@ from concerns import (
 
 
 storage.sync()  # Pull remote change
+timer.sync_to_remote()
 
 
 logger.LOGGERS = [
@@ -355,6 +355,7 @@ async def CCCProgressList(ctx):
     except storage.StorageError as e:
         await ctx.send(str(e))
 
+
 @bot.command()
 @require_admin
 async def mute(ctx, member: discord.Member, reason=None):
@@ -372,7 +373,7 @@ async def mute(ctx, member: discord.Member, reason=None):
 @bot.command()
 @require_admin
 async def unmute(ctx, member: discord.Member):
-    role = discord.utils.get(ctx.guild.roles, name = "Muted")
+    role = discord.utils.get(ctx.guild.roles, name="Muted")
     await member.remove_roles(role)
     await ctx.send(f"<@{member.id}> is now unmuted")
 
