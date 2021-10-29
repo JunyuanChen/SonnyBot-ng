@@ -346,6 +346,8 @@ async def CCCProgressList(ctx):
                 if(len(reply) >= 1500):
                     await member.send(reply)
                     reply = ""
+        if reply:
+            await member.send(reply)
         await ctx.send(f"<@{member.id}>, your progress list has been sent to your DMs")
     except KeyError:
         await ctx.send(f"User <@{member.id}> not found!")
