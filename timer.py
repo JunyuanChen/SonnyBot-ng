@@ -4,6 +4,7 @@ import time
 import threading
 import functools
 
+import logger
 import storage
 
 
@@ -33,4 +34,5 @@ def periodic(interval):
 @periodic(20 * 60)
 def sync_to_remote():
     with storage.LOCK:
+        logger.info("[TIMER] Periodic sync started")
         storage.sync()
