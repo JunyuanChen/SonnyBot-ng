@@ -35,10 +35,6 @@ bot = discord.ext.commands.Bot(
 )
 
 
-# Storage access must be serialized
-STORAGE_LOCK = threading.Lock()
-
-
 require_admin = discord.ext.commands.has_permissions(administrator=True)
 
 
@@ -92,7 +88,7 @@ async def change_exp_subtask(ctx, user, amount):
 async def stat(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
 
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             users = calc_exp.rank_users(storage.User.all())
@@ -116,7 +112,7 @@ async def stat(ctx, member: discord.Member = None):
 
 @bot.command()
 async def leaderboard(ctx):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         users = storage.User.all()
         avatars = []
         names = []
@@ -139,7 +135,7 @@ async def leaderboard(ctx):
 @bot.command()
 @require_admin
 async def removeUser(ctx, member: discord.Member):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             storage.User.load(member.id).destroy()
             reply = f"User <@{member.id}> has been deleted!"
@@ -154,7 +150,7 @@ async def removeUser(ctx, member: discord.Member):
 @bot.command()
 @require_admin
 async def changeEXP(ctx, member: discord.Member, amount: int):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             await change_exp_subtask(ctx, user, amount)
@@ -174,7 +170,7 @@ async def changeEXP(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def changeCoins(ctx, member: discord.Member, amount: int):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             user.coins += amount
@@ -194,7 +190,7 @@ async def changeCoins(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def changeMessageSent(ctx, member: discord.Member, amount: int):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             user.msg_count += amount
@@ -218,7 +214,7 @@ async def transactCoins(ctx, member: discord.Member, amount: int):
     """ Transact amount to user_id. """
     author = ctx.message.author
     logger.debug(f"transactCoins: {author.id} --({amount})--> {member.id}")
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             amount = int(amount)
             assert amount > 0
@@ -248,7 +244,7 @@ async def transactCoins(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def resetUserStat(ctx, member: discord.Member):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             user.exp = 0
@@ -269,7 +265,7 @@ async def resetUserStat(ctx, member: discord.Member):
 @bot.command()
 async def connectDMOJAccount(ctx, username: str):
     author = ctx.message.author
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(author.id)
             assert user.dmoj_username is None
@@ -306,7 +302,7 @@ async def connectDMOJAccount(ctx, username: str):
 @bot.command()
 async def getDMOJAccount(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             name = user.dmoj_username
@@ -318,7 +314,7 @@ async def getDMOJAccount(ctx, member: discord.Member = None):
 @bot.command()
 async def fetchCCCProgress(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             exp_reward, coin_reward = dmoj.update(user)
@@ -402,7 +398,7 @@ async def removeRole(ctx, member: discord.Member, role_name):
 @require_admin
 async def syncData(ctx):
     logger.debug("[Command] syncData")
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             storage.sync()
             await ctx.send("Successfully synced to remote!")

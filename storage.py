@@ -32,8 +32,19 @@ import os
 import copy
 import json
 import subprocess
+import threading
 
 import logger
+
+
+# Storage access must be serialized.
+#
+# This module itself does not use LOCK.  However, callers of
+# this module must use storage.LOCK to serialize access.
+# The rationale is that we need to group multiple storage
+# operations together into a "transaction".  LOCK should be
+# held during the entire transaction.
+LOCK = threading.Lock()
 
 
 STORAGE_DIR = "data"
