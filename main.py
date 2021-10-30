@@ -85,6 +85,17 @@ async def change_exp_subtask(ctx, user, amount):
 
 
 @bot.command()
+async def help(ctx):
+    await ctx.send(embed=chat.normal_help())
+
+
+@bot.command()
+@require_admin
+async def adminHelp(ctx):
+    await ctx.send(embed=chat.admin_help())
+
+
+@bot.command()
 async def stat(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
 
@@ -189,7 +200,7 @@ async def changeCoins(ctx, member: discord.Member, amount: int):
 
 @bot.command()
 @require_admin
-async def changeMessageSent(ctx, member: discord.Member, amount: int):
+async def changeMsgSent(ctx, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -334,6 +345,7 @@ async def fetchCCCProgress(ctx, member: discord.Member = None):
         except storage.StorageError as e:
             await ctx.send(str(e))
 
+
 @bot.command()
 async def CCCProgressList(ctx):
     member = ctx.message.author
@@ -342,13 +354,16 @@ async def CCCProgressList(ctx):
         user = storage.User.load(member.id)
         for problem in dmoj.CCC_PROBLEMS:
             if problem in user.ccc_progress:
-                reply += f"User has completed {user.ccc_progress[problem]}% of {dmoj.CCC_PROBLEMS[problem]['name']}\n"
+                progress = user.ccc_progress[problem]
+                problem_name = dmoj.CCC_PROBLEMS[problem]["name"]
+                reply += f"User has completed {progress}% of {problem_name}\n"
                 if(len(reply) >= 1500):
                     await member.send(reply)
                     reply = ""
         if reply:
             await member.send(reply)
-        await ctx.send(f"<@{member.id}>, your progress list has been sent to your DMs")
+        await ctx.send(f"<@{member.id}>, your progress list "
+                       f"has been sent to your DMs!")
     except KeyError:
         await ctx.send(f"User <@{member.id}> not found!")
     except dmoj.RequestException as e:
@@ -365,7 +380,11 @@ async def mute(ctx, member: discord.Member, reason=None):
     if not role:
         role = await ctx.guild.create_role(name="Muted")
         for channel in ctx.guild.channels:
-            await channel.set_permissions(role, speak=False, send_messages=False)
+            await channel.set_permissions(
+                role,
+                speak=False,
+                send_messages=False
+            )
 
     await member.add_roles(role)
     await ctx.send(f"<@{member.id}> was muted by <@{ctx.message.author.id}>. "
