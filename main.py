@@ -443,6 +443,7 @@ async def on_message(message: discord.Message):
     channel = bot.get_channel(chat.bot_channel(server))
 
     user = storage.User.load_or_create(message.author.id)
+    user.msg_count += 1
     exp_reward = calc_exp.chat_msg_reward(message.content)
     upgraded = await change_exp_subtask(channel, user, exp_reward)
     user.save()
