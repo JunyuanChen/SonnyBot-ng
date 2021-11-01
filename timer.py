@@ -14,7 +14,7 @@ def periodic(interval):
         def loop(*args, **kwargs):
             while True:
                 time.sleep(interval)
-                func()
+                func(*args, **kwargs)
 
         @functools.wraps(func)
         def decorated(*args, **kwargs):
