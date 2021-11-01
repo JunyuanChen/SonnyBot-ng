@@ -186,7 +186,11 @@ async def changeCoins(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def changeMessageSent(ctx, member: discord.Member, amount: int):
+<<<<<<< HEAD
     with STORAGE_LOCK:
+=======
+    with storage.LOCK:
+>>>>>>> parent of 320c466 (Add help() and adminHelp() command)
         try:
             user = storage.User.load(member.id)
             user.msg_count += amount
@@ -342,6 +346,11 @@ async def CCCProgressList(ctx):
                 if(len(reply) >= 1500):
                     await member.send(reply)
                     reply = ""
+<<<<<<< HEAD
+=======
+        if reply:
+            await member.send(reply)
+>>>>>>> parent of 320c466 (Add help() and adminHelp() command)
         await ctx.send(f"<@{member.id}>, your progress list has been sent to your DMs")
     except KeyError:
         await ctx.send(f"User <@{member.id}> not found!")
