@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import io
 import os
-import threading
 
 import discord
 import discord.ext.commands
 
 import logger
 import storage
+import timer
 
 from concerns import (
     user_stat,
@@ -21,6 +20,7 @@ from concerns import (
 
 
 storage.sync()  # Pull remote change
+timer.sync_to_remote()
 
 
 logger.LOGGERS = [
@@ -33,10 +33,6 @@ bot = discord.ext.commands.Bot(
     intents=discord.Intents.all(),
     help_command=None
 )
-
-
-# Storage access must be serialized
-STORAGE_LOCK = threading.Lock()
 
 
 require_admin = discord.ext.commands.has_permissions(administrator=True)
@@ -59,7 +55,7 @@ async def change_exp_subtask(ctx, user, amount):
     if user.level == -1:
         # User's level and EXP is insufficient for the change.
         # Operation should be cancelled.
-        #   
+        #
         # Example: old level = 0, old exp = 5, amount = -100
         #
         # NOTE Do NOT assert user.level > -1 here, since it will raise
@@ -89,17 +85,32 @@ async def change_exp_subtask(ctx, user, amount):
 
 
 @bot.command()
+async def help(ctx):
+    await ctx.send(embed=chat.normal_help())
+
+
+@bot.command()
+@require_admin
+async def adminHelp(ctx):
+    await ctx.send(embed=chat.admin_help())
+
+
+@bot.command()
 async def stat(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
 
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
-            users = storage.User.all()
-            rank = calc_exp.rank_users(users).index(user)
+            users = calc_exp.rank_users(storage.User.all())
+            rank = users.index(user)
+            ahead = [
+                x for x in users[:rank]
+                if ctx.guild.get_member(x) is not None
+            ]
             stat_img = user_stat.draw_stat(
                 await chat.get_avatar(member), member.name, user.level,
-                rank + 1, user.exp, user.coins, user.msg_count
+                len(ahead) + 1, user.exp, user.coins, user.msg_count
             )
             img_file = discord.File(stat_img)
             await ctx.send(file=img_file)
@@ -112,15 +123,20 @@ async def stat(ctx, member: discord.Member = None):
 
 @bot.command()
 async def leaderboard(ctx):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         users = storage.User.all()
-        top_10 = calc_exp.rank_users(users)[:10]
-        top_10_as_member = [ctx.guild.get_member(u.id) for u in top_10]
-        leaderboard_img = user_stat.leaderboard(
-            [await chat.get_avatar(m) for m in top_10_as_member],
-            [m.name for m in top_10_as_member],
-            [u.level for u in top_10]
-        )
+        avatars = []
+        names = []
+        levels = []
+        for user in calc_exp.rank_users(users):
+            member = ctx.guild.get_member(user.id)
+            if member is not None:
+                avatars.append(await chat.get_avatar(member))
+                names.append(member.name)
+                levels.append(user.level)
+                if len(names) == 10:
+                    break
+        leaderboard_img = user_stat.leaderboard(avatars, names, levels)
         img_file = discord.File(leaderboard_img)
         await ctx.send(file=img_file)
         img_file.close()
@@ -130,7 +146,7 @@ async def leaderboard(ctx):
 @bot.command()
 @require_admin
 async def removeUser(ctx, member: discord.Member):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             storage.User.load(member.id).destroy()
             reply = f"User <@{member.id}> has been deleted!"
@@ -145,7 +161,7 @@ async def removeUser(ctx, member: discord.Member):
 @bot.command()
 @require_admin
 async def changeEXP(ctx, member: discord.Member, amount: int):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             await change_exp_subtask(ctx, user, amount)
@@ -165,8 +181,7 @@ async def changeEXP(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def changeCoins(ctx, member: discord.Member, amount: int):
-    await ctx.message.delete()
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             user.coins += amount
@@ -185,8 +200,8 @@ async def changeCoins(ctx, member: discord.Member, amount: int):
 
 @bot.command()
 @require_admin
-async def changeMessageSent(ctx, member: discord.Member, amount: int):
-    with STORAGE_LOCK:
+async def changeMsgSent(ctx, member: discord.Member, amount: int):
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             user.msg_count += amount
@@ -210,7 +225,7 @@ async def transactCoins(ctx, member: discord.Member, amount: int):
     """ Transact amount to user_id. """
     author = ctx.message.author
     logger.debug(f"transactCoins: {author.id} --({amount})--> {member.id}")
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             amount = int(amount)
             assert amount > 0
@@ -240,7 +255,7 @@ async def transactCoins(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def resetUserStat(ctx, member: discord.Member):
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             user.exp = 0
@@ -261,7 +276,7 @@ async def resetUserStat(ctx, member: discord.Member):
 @bot.command()
 async def connectDMOJAccount(ctx, username: str):
     author = ctx.message.author
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(author.id)
             assert user.dmoj_username is None
@@ -298,7 +313,7 @@ async def connectDMOJAccount(ctx, username: str):
 @bot.command()
 async def getDMOJAccount(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             name = user.dmoj_username
@@ -310,7 +325,7 @@ async def getDMOJAccount(ctx, member: discord.Member = None):
 @bot.command()
 async def fetchCCCProgress(ctx, member: discord.Member = None):
     member = ctx.message.author if member is None else member
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             user = storage.User.load(member.id)
             exp_reward, coin_reward = dmoj.update(user)
@@ -330,6 +345,7 @@ async def fetchCCCProgress(ctx, member: discord.Member = None):
         except storage.StorageError as e:
             await ctx.send(str(e))
 
+
 @bot.command()
 async def CCCProgressList(ctx):
     member = ctx.message.author
@@ -338,11 +354,16 @@ async def CCCProgressList(ctx):
         user = storage.User.load(member.id)
         for problem in dmoj.CCC_PROBLEMS:
             if problem in user.ccc_progress:
-                reply += f"User has completed {user.ccc_progress[problem]}% of {dmoj.CCC_PROBLEMS[problem]['name']}\n"
+                progress = user.ccc_progress[problem]
+                problem_name = dmoj.CCC_PROBLEMS[problem]["name"]
+                reply += f"User has completed {progress}% of {problem_name}\n"
                 if(len(reply) >= 1500):
                     await member.send(reply)
                     reply = ""
-        await ctx.send(f"<@{member.id}>, your progress list has been sent to your DMs")
+        if reply:
+            await member.send(reply)
+        await ctx.send(f"<@{member.id}>, your progress list "
+                       f"has been sent to your DMs!")
     except KeyError:
         await ctx.send(f"User <@{member.id}> not found!")
     except dmoj.RequestException as e:
@@ -351,6 +372,7 @@ async def CCCProgressList(ctx):
     except storage.StorageError as e:
         await ctx.send(str(e))
 
+
 @bot.command()
 @require_admin
 async def mute(ctx, member: discord.Member, reason=None):
@@ -358,18 +380,21 @@ async def mute(ctx, member: discord.Member, reason=None):
     if not role:
         role = await ctx.guild.create_role(name="Muted")
         for channel in ctx.guild.channels:
-            await channel.set_permissions(role, speak=False, send_messages=False)
+            await channel.set_permissions(
+                role,
+                speak=False,
+                send_messages=False
+            )
 
     await member.add_roles(role)
     await ctx.send(f"<@{member.id}> was muted by <@{ctx.message.author.id}>. "
                    f"Reason: {reason}")
 
-#testing
 
 @bot.command()
 @require_admin
 async def unmute(ctx, member: discord.Member):
-    role = discord.utils.get(ctx.guild.roles, name = "Muted")
+    role = discord.utils.get(ctx.guild.roles, name="Muted")
     await member.remove_roles(role)
     await ctx.send(f"<@{member.id}> is now unmuted")
 
@@ -394,7 +419,7 @@ async def removeRole(ctx, member: discord.Member, role_name):
 @require_admin
 async def syncData(ctx):
     logger.debug("[Command] syncData")
-    with STORAGE_LOCK:
+    with storage.LOCK:
         try:
             storage.sync()
             await ctx.send("Successfully synced to remote!")
