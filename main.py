@@ -106,7 +106,7 @@ async def stat(ctx, member: discord.Member = None):
             rank = users.index(user)
             ahead = [
                 x for x in users[:rank]
-                if ctx.guild.get_member(x) is not None
+                if ctx.guild.get_member(x.id) is not None
             ]
             stat_img = user_stat.draw_stat(
                 await chat.get_avatar(member), member.name, user.level,
