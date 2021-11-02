@@ -37,6 +37,13 @@ bot = discord.ext.commands.Bot(
 
 require_admin = discord.ext.commands.has_permissions(administrator=True)
 
+def dissapear_command(ctx):
+    def wrap(f):
+        def dec(*args, **kwargs):
+            ctx.message.delete()
+            f(*args, **kwargs)
+        return dec
+    return wrap
 
 async def change_exp_subtask(ctx, user, amount):
     """
@@ -180,6 +187,7 @@ async def changeEXP(ctx, member: discord.Member, amount: int):
 
 @bot.command()
 @require_admin
+@dissapear_command(ctx)
 async def changeCoins(ctx, member: discord.Member, amount: int):
     await ctx.message.delete()
     with storage.LOCK:
