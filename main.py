@@ -180,7 +180,6 @@ async def changeEXP(ctx, member: discord.Member, amount: int):
 @bot.command()
 @require_admin
 async def changeCoins(ctx, member: discord.Member, amount: int):
-    await ctx.message.delete()
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
