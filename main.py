@@ -37,14 +37,6 @@ bot = discord.ext.commands.Bot(
 
 require_admin = discord.ext.commands.has_permissions(administrator=True)
 
-def dissapear_command(ctx):
-    def wrap(f):
-        def dec(*args, **kwargs):
-            ctx.message.delete()
-            f(*args, **kwargs)
-        return dec
-    return wrap
-
 async def change_exp_subtask(ctx, user, amount):
     """
     Change user's EXP by amount.
@@ -187,7 +179,6 @@ async def changeEXP(ctx, member: discord.Member, amount: int):
 
 @bot.command()
 @require_admin
-@dissapear_command(ctx)
 async def changeCoins(ctx, member: discord.Member, amount: int):
     await ctx.message.delete()
     with storage.LOCK:
@@ -467,6 +458,12 @@ async def on_message(message: discord.Message):
             storage.commit(f"Upgrade User {user.id} to Lvl. {user.level}")
         except storage.StorageError as e:
             await channel.send(str(e))
+    
+    ctx = await bot.get_context(message)
+
+    if ctx.valid:
+        if ctx.command:
+            message.delete()
 
     await bot.process_commands(message)
 
