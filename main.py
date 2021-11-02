@@ -463,9 +463,8 @@ async def on_message(message: discord.Message):
 
     await bot.process_commands(message)
 
-    if ctx.valid:
-        if ctx.command:
-            await message.delete()
+    if ctx.command:
+        await ctx.message.delete()
 
 
 @bot.event
