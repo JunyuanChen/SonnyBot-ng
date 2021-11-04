@@ -39,7 +39,7 @@ bot = discord.ext.commands.Bot(
 
 slash = SlashCommand(bot, sync_commands=True)
 
-guild_id = [864289947791392789, 762065730191228929]
+guild_id = [762065730191228929]
 
 require_admin = discord.ext.commands.has_permissions(administrator=True)
 
@@ -100,8 +100,8 @@ async def adminHelp(ctx):
     await ctx.send(embed=chat.admin_help())
 
 
-@slash.slash(name="stat", description="Shows user stat", guild_ids=[864289947791392789])
-async def _stat(ctx : SlashContext, member: discord.Member = None):
+@slash.slash(name="stat", description="Shows user stat", guild_ids=guild_id)
+async def _stat(ctx: SlashContext, member: discord.Member = None):
     member = ctx.author if member is None else member
 
     with storage.LOCK:
@@ -126,8 +126,8 @@ async def _stat(ctx : SlashContext, member: discord.Member = None):
             await ctx.send(f"User <@{member.id}> not found!")
 
 
-@bot.command()
-async def leaderboard(ctx):
+@slash.slash(name="leaderboard", description="Shows leaderboard", guild_ids=guild_id)
+async def _leaderboard(ctx: SlashContext):
     with storage.LOCK:
         users = storage.User.all()
         avatars = []
@@ -148,9 +148,9 @@ async def leaderboard(ctx):
         os.unlink(leaderboard_img)
 
 
-@bot.command()
+@slash.slash(name="removeUser", description="Removes user from database", guild_ids=guild_id)
 @require_admin
-async def removeUser(ctx, member: discord.Member):
+async def _removeUser(ctx: SlashContext, member: discord.Member):
     with storage.LOCK:
         try:
             storage.User.load(member.id).destroy()
@@ -163,9 +163,9 @@ async def removeUser(ctx, member: discord.Member):
     await ctx.send(reply)
 
 
-@bot.command()
+@slash.slash(name="changeEXP", description="Changes user xp", guild_ids=guild_id)
 @require_admin
-async def changeEXP(ctx, member: discord.Member, amount: int):
+async def _changeEXP(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -183,10 +183,9 @@ async def changeEXP(ctx, member: discord.Member, amount: int):
     await ctx.send(reply)
 
 
-@bot.command()
+@slash.slash(name="changeCoins", description="Changes user coins", guild_ids=guild_id)
 @require_admin
-async def changeCoins(ctx, member: discord.Member, amount: int):
-    await ctx.message.delete()
+async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -204,9 +203,9 @@ async def changeCoins(ctx, member: discord.Member, amount: int):
     await ctx.send(reply)
 
 
-@bot.command()
+@slash.slash(name="changeMsgSent", description="Changes value of msg sent", guild_ids=guild_id)
 @require_admin
-async def changeMsgSent(ctx, member: discord.Member, amount: int):
+async def _changeMsgSent(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -226,10 +225,10 @@ async def changeMsgSent(ctx, member: discord.Member, amount: int):
     await ctx.send(reply)
 
 
-@bot.command()
-async def transactCoins(ctx, member: discord.Member, amount: int):
+@slash.slash(name="transactCoins", description="Transacts coins from user to user", guild_ids=guild_id)
+async def _transactCoins(ctx: SlashContext, member: discord.Member, amount: int):
     """ Transact amount to user_id. """
-    author = ctx.message.author
+    author = ctx.author
     logger.debug(f"transactCoins: {author.id} --({amount})--> {member.id}")
     with storage.LOCK:
         try:
@@ -258,9 +257,9 @@ async def transactCoins(ctx, member: discord.Member, amount: int):
     await ctx.send(reply)
 
 
-@bot.command()
+@slash.slash(name="resetUserStat", description="Resets user stats", guild_ids=guild_id)
 @require_admin
-async def resetUserStat(ctx, member: discord.Member):
+async def _resetUserStat(ctx: SlashContext, member: discord.Member):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -279,9 +278,9 @@ async def resetUserStat(ctx, member: discord.Member):
     await ctx.send(reply)
 
 
-@bot.command()
-async def connectDMOJAccount(ctx, username: str):
-    author = ctx.message.author
+@slash.slash(name="connectDMOJAccount", description="Connects user to DMOJ account", guild_ids=guild_id)
+async def _connectDMOJAccount(ctx: SlashContext, username: str):
+    author = ctx.author
     with storage.LOCK:
         try:
             user = storage.User.load(author.id)
@@ -316,9 +315,9 @@ async def connectDMOJAccount(ctx, username: str):
             await ctx.send(str(e))
 
 
-@bot.command()
-async def getDMOJAccount(ctx, member: discord.Member = None):
-    member = ctx.message.author if member is None else member
+@slash.slash(name="getDMOJAccount", description="Gets user DMOJ account", guild_ids=guild_id)
+async def _getDMOJAccount(ctx: SlashContext, member: discord.Member = None):
+    member = ctx.author if member is None else member
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -328,9 +327,9 @@ async def getDMOJAccount(ctx, member: discord.Member = None):
             await ctx.send(f"User <@{member.id}> not found!")
 
 
-@bot.command()
-async def fetchCCCProgress(ctx, member: discord.Member = None):
-    member = ctx.message.author if member is None else member
+@slash.slash(name="fetchCCCProgress", description="Fetched user DMOJ progress", guild_ids=guild_id)
+async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
+    member = ctx.author if member is None else member
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -352,9 +351,9 @@ async def fetchCCCProgress(ctx, member: discord.Member = None):
             await ctx.send(str(e))
 
 
-@bot.command()
-async def CCCProgressList(ctx):
-    member = ctx.message.author
+@slash.slash(name="CCCProgressList", description="Gets user CCC progress", guild_ids=guild_id)
+async def _CCCProgressList(ctx: SlashContext):
+    member = ctx.author
     reply = ""
     try:
         user = storage.User.load(member.id)
@@ -379,9 +378,9 @@ async def CCCProgressList(ctx):
         await ctx.send(str(e))
 
 
-@bot.command()
+@slash.slash(name="mute", description="Mutes user", guild_ids=guild_id)
 @require_admin
-async def mute(ctx, member: discord.Member, reason=None):
+async def _mute(ctx: SlashContext, member: discord.Member, reason=None):
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     if not role:
         role = await ctx.guild.create_role(name="Muted")
@@ -393,37 +392,37 @@ async def mute(ctx, member: discord.Member, reason=None):
             )
 
     await member.add_roles(role)
-    await ctx.send(f"<@{member.id}> was muted by <@{ctx.message.author.id}>. "
+    await ctx.send(f"<@{member.id}> was muted by <@{ctx.author.id}>. "
                    f"Reason: {reason}")
 
 
-@bot.command()
+@slash.slash(name="unmute", description="Unmutes user", guild_ids=guild_id)
 @require_admin
-async def unmute(ctx, member: discord.Member):
+async def _unmute(ctx: SlashContext, member: discord.Member):
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     await member.remove_roles(role)
     await ctx.send(f"<@{member.id}> is now unmuted")
 
 
-@bot.command()
+@slash.slash(name="addRole", description="Adds Role", guild_ids=guild_id)
 @require_admin
-async def addRole(ctx, member: discord.Member, role_name):
+async def _addRole(ctx: SlashContext, member: discord.Member, role_name):
     role = discord.utils.get(ctx.guild.roles, name=role_name)
     if not role:
         await ctx.guild.create_role(name=role_name)
     await member.add_roles(role)
 
 
-@bot.command()
+@slash.slash(name="removeRole", description="Removes role", guild_ids=guild_id)
 @require_admin
-async def removeRole(ctx, member: discord.Member, role_name):
+async def _removeRole(ctx: SlashContext, member: discord.Member, role_name):
     role = discord.utils.get(ctx.guild.roles, name=role_name)
     await member.remove_roles(role)
 
 
-@bot.command()
+@slash.slash(name="syncData", description="Syncs data to remote", guild_ids=guild_id)
 @require_admin
-async def syncData(ctx):
+async def _syncData(ctx: SlashContext):
     logger.debug("[Command] syncData")
     with storage.LOCK:
         try:
@@ -483,4 +482,4 @@ async def on_member_join(member: discord.Member):
 
 
 if __name__ == "__main__":
-    bot.run('OTAyMTk0MDIzMDEwMjgzNTUz.YXa3qQ.OnYLly5Y0nVNk0YRnr3yYDO108c')
+    bot.run('NjIyMTE4MTAxMDY4MTUyODQz.XXvOoQ.y3m-BnK6ruGxrH8Xj4hoduqy_QY')
