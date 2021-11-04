@@ -41,7 +41,9 @@ slash = SlashCommand(bot, sync_commands=True)
 
 guild_id = [762065730191228929]
 
+
 require_admin = discord.ext.commands.has_permissions(administrator=True)
+
 
 async def change_exp_subtask(ctx, user, amount):
     """
@@ -87,17 +89,6 @@ async def change_exp_subtask(ctx, user, amount):
                        f"{user.level} and lost {coins} coins!")
         return False
     return None
-
-
-@bot.command()
-async def help(ctx):
-    await ctx.send(embed=chat.normal_help())
-
-
-@bot.command()
-@require_admin
-async def adminHelp(ctx):
-    await ctx.send(embed=chat.admin_help())
 
 
 @slash.slash(name="redeploy", description="Redeploy bot", guild_ids=guild_id)
