@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import os
+from PIL.Image import NONE
 
 import discord
 import discord.ext.commands
@@ -38,10 +39,9 @@ bot = discord.ext.commands.Bot(
 
 slash = SlashCommand(bot, sync_commands=True)
 
+guild_id = [864289947791392789, 762065730191228929]
 
 require_admin = discord.ext.commands.has_permissions(administrator=True)
-
-guild_id = [762065730191228929]
 
 async def change_exp_subtask(ctx, user, amount):
     """
@@ -100,9 +100,9 @@ async def adminHelp(ctx):
     await ctx.send(embed=chat.admin_help())
 
 
-@slash.slash(name="stat", description="Shows user stat", guild_ids=guild_id)
-async def stat(ctx: SlashContext, member: discord.Member = None):
-    member = ctx.message.author if member is None else member
+@slash.slash(name="stat", description="Shows user stat", guild_ids=[864289947791392789])
+async def _stat(ctx : SlashContext, member: discord.Member = None):
+    member = ctx.author if member is None else member
 
     with storage.LOCK:
         try:
