@@ -5,6 +5,7 @@ import os
 
 import discord
 import discord.ext.commands
+from discord_slash import SlashCommand, SlashContext
 
 import logger
 import storage
@@ -35,7 +36,12 @@ bot = discord.ext.commands.Bot(
 )
 
 
+slash = SlashCommand(bot, sync_commands=True)
+
+
 require_admin = discord.ext.commands.has_permissions(administrator=True)
+
+guild_id = [762065730191228929]
 
 async def change_exp_subtask(ctx, user, amount):
     """
@@ -94,8 +100,8 @@ async def adminHelp(ctx):
     await ctx.send(embed=chat.admin_help())
 
 
-@bot.command()
-async def stat(ctx, member: discord.Member = None):
+@slash.slash(name="stat", description="Shows user stat", guild_ids=guild_id)
+async def stat(ctx: SlashContext, member: discord.Member = None):
     member = ctx.message.author if member is None else member
 
     with storage.LOCK:
@@ -477,4 +483,4 @@ async def on_member_join(member: discord.Member):
 
 
 if __name__ == "__main__":
-    bot.run(os.environ["BOT_TOKEN"])
+    bot.run('OTAyMTk0MDIzMDEwMjgzNTUz.YXa3qQ.OnYLly5Y0nVNk0YRnr3yYDO108c')
