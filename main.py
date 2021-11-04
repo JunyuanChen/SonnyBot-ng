@@ -98,7 +98,7 @@ async def _redeploy(ctx: SlashContext):
     import subprocess
     try:
         subprocess.run(["git", "pull", "origin"], check=True)
-        subprocess.Popen(["python3", "main.py"], check=True)
+        subprocess.Popen(["python3", "main.py"])
         await ctx.send("Successfully redeployed! Restarting...")
         exit()
     except subprocess.CalledProcessError as e:
