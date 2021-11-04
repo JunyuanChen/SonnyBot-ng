@@ -100,6 +100,20 @@ async def adminHelp(ctx):
     await ctx.send(embed=chat.admin_help())
 
 
+@slash.slash(name="redeploy", description="Redeploy bot", guild_ids=guild_id)
+@require_admin
+async def _redeploy(ctx: SlashContext):
+    import subprocess
+    try:
+        subprocess.run(["git", "pull", "origin"], check=True)
+        subprocess.Popen(["python3", "main.py"], check=True)
+        await ctx.send("Successfully redeployed! Restarting...")
+        exit()
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Redeployment failed with {e.returncode}: {e.cmd}")
+        await ctx.send("Failed to redeploy - see logs for details")
+
+
 @slash.slash(name="stat", description="Shows user stat", guild_ids=guild_id)
 async def _stat(ctx: SlashContext, member: discord.Member = None):
     member = ctx.author if member is None else member
