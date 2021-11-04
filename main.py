@@ -38,8 +38,12 @@ bot = discord.ext.commands.Bot(
 
 
 slash = SlashCommand(bot, sync_commands=True)
-
 guild_id = [762065730191228929]
+perm_admin = {
+    "id": 762066431230607430,
+    "type": "ROLE",
+    "permission": True
+}
 
 
 async def change_exp_subtask(ctx, user, amount):
@@ -92,7 +96,8 @@ async def change_exp_subtask(ctx, user, amount):
     name="redeploy",
     description="Redeploy bot",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _redeploy(ctx: SlashContext):
     import subprocess
@@ -166,7 +171,8 @@ async def _leaderboard(ctx: SlashContext):
     name="removeUser",
     description="Removes user from database",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _removeUser(ctx: SlashContext, member: discord.Member):
     with storage.LOCK:
@@ -185,7 +191,8 @@ async def _removeUser(ctx: SlashContext, member: discord.Member):
     name="changeEXP",
     description="Changes user EXP",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _changeEXP(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
@@ -209,7 +216,8 @@ async def _changeEXP(ctx: SlashContext, member: discord.Member, amount: int):
     name="changeCoins",
     description="Changes user coins",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
@@ -233,7 +241,8 @@ async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
     name="changeMsgSent",
     description="Changes value of msg sent",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _changeMsgSent(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
@@ -295,7 +304,8 @@ async def _transactCoins(ctx: SlashContext, member: discord.Member, amount: int)
     name="resetUserStat",
     description="Resets user stats",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _resetUserStat(ctx: SlashContext, member: discord.Member):
     with storage.LOCK:
@@ -436,14 +446,16 @@ async def _CCCProgressList(ctx: SlashContext):
     name="mute",
     description="Mutes user",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _mute(ctx: SlashContext, member: discord.Member, reason=None):
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     if not role:
         role = await ctx.guild.create_role(name="Muted")
         for channel in ctx.guild.channels:
-            await channel.set_permissions(
+            await channel.set_default_permission=False,
+    permissions(
                 role,
                 speak=False,
                 send_messages=False
@@ -458,7 +470,8 @@ async def _mute(ctx: SlashContext, member: discord.Member, reason=None):
     name="unmute",
     description="Unmutes user",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _unmute(ctx: SlashContext, member: discord.Member):
     role = discord.utils.get(ctx.guild.roles, name="Muted")
@@ -470,7 +483,8 @@ async def _unmute(ctx: SlashContext, member: discord.Member):
     name="addRole",
     description="Adds Role",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _addRole(ctx: SlashContext, member: discord.Member, role_name):
     role = discord.utils.get(ctx.guild.roles, name=role_name)
@@ -483,7 +497,8 @@ async def _addRole(ctx: SlashContext, member: discord.Member, role_name):
     name="removeRole",
     description="Removes role",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _removeRole(ctx: SlashContext, member: discord.Member, role_name):
     role = discord.utils.get(ctx.guild.roles, name=role_name)
@@ -494,7 +509,8 @@ async def _removeRole(ctx: SlashContext, member: discord.Member, role_name):
     name="syncData",
     description="Syncs data to remote",
     guild_ids=guild_id,
-    permissions={"administrator": True}
+    default_permission=False,
+    permissions=perm_admin
 )
 async def _syncData(ctx: SlashContext):
     logger.debug("[Command] syncData")
