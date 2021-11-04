@@ -4,8 +4,6 @@
 
 import io
 
-import discord
-
 import logger
 
 

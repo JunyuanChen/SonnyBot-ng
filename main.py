@@ -2,7 +2,6 @@
 # coding: utf-8
 
 import os
-from PIL.Image import NONE
 
 import discord
 import discord.ext.commands
@@ -244,7 +243,11 @@ async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
     default_permission=False,
     permissions=perm_admin
 )
-async def _changeMsgSent(ctx: SlashContext, member: discord.Member, amount: int):
+async def _changeMsgSent(
+    ctx: SlashContext,
+    member: discord.Member,
+    amount: int
+):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -269,7 +272,11 @@ async def _changeMsgSent(ctx: SlashContext, member: discord.Member, amount: int)
     description="Transacts coins from user to user",
     guild_ids=guild_id
 )
-async def _transactCoins(ctx: SlashContext, member: discord.Member, amount: int):
+async def _transactCoins(
+    ctx: SlashContext,
+    member: discord.Member,
+    amount: int
+):
     """ Transact amount to user_id. """
     author = ctx.author
     logger.debug(f"transactCoins: {author.id} --({amount})--> {member.id}")
@@ -454,8 +461,7 @@ async def _mute(ctx: SlashContext, member: discord.Member, reason=None):
     if not role:
         role = await ctx.guild.create_role(name="Muted")
         for channel in ctx.guild.channels:
-            await channel.set_default_permission=False,
-    permissions(
+            await channel.set_permissions(
                 role,
                 speak=False,
                 send_messages=False
@@ -553,14 +559,13 @@ async def on_message(message: discord.Message):
             storage.commit(f"Upgrade User {user.id} to Lvl. {user.level}")
         except storage.StorageError as e:
             await channel.send(str(e))
-    
+
     ctx = await bot.get_context(message)
 
     if ctx.command:
         await ctx.message.delete()
 
     await bot.process_commands(message)
-
 
 
 @bot.event
