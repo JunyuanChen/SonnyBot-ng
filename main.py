@@ -45,6 +45,9 @@ perm_admin = {
 }
 
 
+require_admin = discord.ext.commands.has_permissions(administrator=True)
+
+
 async def change_exp_subtask(ctx, user, amount):
     """
     Change user's EXP by amount.
@@ -91,13 +94,8 @@ async def change_exp_subtask(ctx, user, amount):
     return None
 
 
-@slash.slash(
-    name="redeploy",
-    description="Redeploy bot",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="redeploy", description="Redeploy bot", guild_ids=guild_id)
+@require_admin
 async def _redeploy(ctx: SlashContext):
     import subprocess
     try:
@@ -110,11 +108,7 @@ async def _redeploy(ctx: SlashContext):
         await ctx.send("Failed to redeploy - see logs for details")
 
 
-@slash.slash(
-    name="stat",
-    description="Shows user stat",
-    guild_ids=guild_id
-)
+@slash.slash(name="stat", description="Shows user stat", guild_ids=guild_id)
 async def _stat(ctx: SlashContext, member: discord.Member = None):
     member = ctx.author if member is None else member
 
@@ -140,11 +134,7 @@ async def _stat(ctx: SlashContext, member: discord.Member = None):
             await ctx.send(f"User <@{member.id}> not found!")
 
 
-@slash.slash(
-    name="leaderboard",
-    description="Shows leaderboard",
-    guild_ids=guild_id
-)
+@slash.slash(name="leaderboard", description="Shows leaderboard", guild_ids=guild_id)
 async def _leaderboard(ctx: SlashContext):
     with storage.LOCK:
         users = storage.User.all()
@@ -166,13 +156,8 @@ async def _leaderboard(ctx: SlashContext):
         os.unlink(leaderboard_img)
 
 
-@slash.slash(
-    name="removeUser",
-    description="Removes user from database",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="removeUser", description="Removes user from database", guild_ids=guild_id)
+@require_admin
 async def _removeUser(ctx: SlashContext, member: discord.Member):
     with storage.LOCK:
         try:
@@ -186,13 +171,8 @@ async def _removeUser(ctx: SlashContext, member: discord.Member):
     await ctx.send(reply)
 
 
-@slash.slash(
-    name="changeEXP",
-    description="Changes user EXP",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="changeEXP", description="Changes user xp", guild_ids=guild_id)
+@require_admin
 async def _changeEXP(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
@@ -211,13 +191,8 @@ async def _changeEXP(ctx: SlashContext, member: discord.Member, amount: int):
     await ctx.send(reply)
 
 
-@slash.slash(
-    name="changeCoins",
-    description="Changes user coins",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="changeCoins", description="Changes user coins", guild_ids=guild_id)
+@require_admin
 async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
@@ -236,18 +211,9 @@ async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
     await ctx.send(reply)
 
 
-@slash.slash(
-    name="changeMsgSent",
-    description="Changes value of msg sent",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
-async def _changeMsgSent(
-    ctx: SlashContext,
-    member: discord.Member,
-    amount: int
-):
+@slash.slash(name="changeMsgSent", description="Changes value of msg sent", guild_ids=guild_id)
+@require_admin
+async def _changeMsgSent(ctx: SlashContext, member: discord.Member, amount: int):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
@@ -267,16 +233,8 @@ async def _changeMsgSent(
     await ctx.send(reply)
 
 
-@slash.slash(
-    name="transactCoins",
-    description="Transacts coins from user to user",
-    guild_ids=guild_id
-)
-async def _transactCoins(
-    ctx: SlashContext,
-    member: discord.Member,
-    amount: int
-):
+@slash.slash(name="transactCoins", description="Transacts coins from user to user", guild_ids=guild_id)
+async def _transactCoins(ctx: SlashContext, member: discord.Member, amount: int):
     """ Transact amount to user_id. """
     author = ctx.author
     logger.debug(f"transactCoins: {author.id} --({amount})--> {member.id}")
@@ -307,13 +265,8 @@ async def _transactCoins(
     await ctx.send(reply)
 
 
-@slash.slash(
-    name="resetUserStat",
-    description="Resets user stats",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="resetUserStat", description="Resets user stats", guild_ids=guild_id)
+@require_admin
 async def _resetUserStat(ctx: SlashContext, member: discord.Member):
     with storage.LOCK:
         try:
@@ -333,11 +286,7 @@ async def _resetUserStat(ctx: SlashContext, member: discord.Member):
     await ctx.send(reply)
 
 
-@slash.slash(
-    name="connectDMOJAccount",
-    description="Connects user to DMOJ account",
-    guild_ids=guild_id
-)
+@slash.slash(name="connectDMOJAccount", description="Connects user to DMOJ account", guild_ids=guild_id)
 async def _connectDMOJAccount(ctx: SlashContext, username: str):
     author = ctx.author
     with storage.LOCK:
@@ -374,11 +323,7 @@ async def _connectDMOJAccount(ctx: SlashContext, username: str):
             await ctx.send(str(e))
 
 
-@slash.slash(
-    name="getDMOJAccount",
-    description="Gets user DMOJ account",
-    guild_ids=guild_id
-)
+@slash.slash(name="getDMOJAccount", description="Gets user DMOJ account", guild_ids=guild_id)
 async def _getDMOJAccount(ctx: SlashContext, member: discord.Member = None):
     member = ctx.author if member is None else member
     with storage.LOCK:
@@ -390,11 +335,7 @@ async def _getDMOJAccount(ctx: SlashContext, member: discord.Member = None):
             await ctx.send(f"User <@{member.id}> not found!")
 
 
-@slash.slash(
-    name="fetchCCCProgress",
-    description="Fetched user DMOJ progress",
-    guild_ids=guild_id
-)
+@slash.slash(name="fetchCCCProgress", description="Fetched user DMOJ progress", guild_ids=guild_id)
 async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
     member = ctx.author if member is None else member
     with storage.LOCK:
@@ -418,11 +359,7 @@ async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
             await ctx.send(str(e))
 
 
-@slash.slash(
-    name="CCCProgressList",
-    description="Gets user CCC progress",
-    guild_ids=guild_id
-)
+@slash.slash(name="CCCProgressList", description="Gets user CCC progress", guild_ids=guild_id)
 async def _CCCProgressList(ctx: SlashContext):
     member = ctx.author
     reply = ""
@@ -449,13 +386,8 @@ async def _CCCProgressList(ctx: SlashContext):
         await ctx.send(str(e))
 
 
-@slash.slash(
-    name="mute",
-    description="Mutes user",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="mute", description="Mutes user", guild_ids=guild_id)
+@require_admin
 async def _mute(ctx: SlashContext, member: discord.Member, reason=None):
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     if not role:
@@ -472,26 +404,16 @@ async def _mute(ctx: SlashContext, member: discord.Member, reason=None):
                    f"Reason: {reason}")
 
 
-@slash.slash(
-    name="unmute",
-    description="Unmutes user",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="unmute", description="Unmutes user", guild_ids=guild_id)
+@require_admin
 async def _unmute(ctx: SlashContext, member: discord.Member):
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     await member.remove_roles(role)
     await ctx.send(f"<@{member.id}> is now unmuted")
 
 
-@slash.slash(
-    name="addRole",
-    description="Adds Role",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="addRole", description="Adds Role", guild_ids=guild_id)
+@require_admin
 async def _addRole(ctx: SlashContext, member: discord.Member, role_name):
     role = discord.utils.get(ctx.guild.roles, name=role_name)
     if not role:
@@ -499,25 +421,15 @@ async def _addRole(ctx: SlashContext, member: discord.Member, role_name):
     await member.add_roles(role)
 
 
-@slash.slash(
-    name="removeRole",
-    description="Removes role",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="removeRole", description="Removes role", guild_ids=guild_id)
+@require_admin
 async def _removeRole(ctx: SlashContext, member: discord.Member, role_name):
     role = discord.utils.get(ctx.guild.roles, name=role_name)
     await member.remove_roles(role)
 
 
-@slash.slash(
-    name="syncData",
-    description="Syncs data to remote",
-    guild_ids=guild_id,
-    default_permission=False,
-    permissions=perm_admin
-)
+@slash.slash(name="syncData", description="Syncs data to remote", guild_ids=guild_id)
+@require_admin
 async def _syncData(ctx: SlashContext):
     logger.debug("[Command] syncData")
     with storage.LOCK:
