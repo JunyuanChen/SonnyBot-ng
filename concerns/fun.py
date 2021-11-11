@@ -10,4 +10,4 @@ def gamble_curve(rand):
 
 def gamble():
     rand = random.random()
-    return 100 * gamble_curve(rand)
+    return round(100 * gamble_curve(rand))
