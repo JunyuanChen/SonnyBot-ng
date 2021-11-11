@@ -3,11 +3,11 @@
 import random
 
 
-def gamble_reward(rand):
+def gamble_curve(rand):
     """ Reward curve for gambling. """
-    return 100 * (2 ** rand - 1)
+    return 2 ** (-10 * rand)
 
 
 def gamble():
     rand = random.random()
-    return gamble_reward(rand)
+    return 100 * gamble_curve(rand)
