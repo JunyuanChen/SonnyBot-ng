@@ -306,7 +306,7 @@ async def _transactCoins(
     guild_ids=guild_id
 )
 async def _gamble(ctx: SlashContext):
-    member = ctx.message.author
+    member = ctx.author
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
