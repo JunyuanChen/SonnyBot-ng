@@ -302,7 +302,9 @@ async def _transactCoins(
 
 @slash.slash(
     name="gamble",
-    description="Gamble using 30 coins (max reward: 100 coins)",
+    description=("Gamble using 30 coins (max reward: 100 coins). "
+                 "See https://github.com/JunyuanChen/SonnyBot-ng/"
+                 "blob/main/fun.py#L8-L34 for the algorithm."),
     guild_ids=guild_id
 )
 async def _gamble(ctx: SlashContext):
