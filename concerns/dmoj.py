@@ -17,6 +17,12 @@ with open("assets/ccc.json", "r", encoding="utf-8") as f:
     CCC_PROBLEMS = json.load(f)
 
 
+def ccc_difficulty(problem):
+    if problem in CCC_PROBLEMS:
+        return CCC_PROBLEMS[problem]["difficulty"]
+    return 0
+
+
 def api_for(username):
     quoted = requests.utils.quote(username)
     return f"https://dmoj.ca/user/{quoted}/solved"
@@ -104,7 +110,7 @@ def update_ccc(user, ccc):
             old_percentage = 0
         if old_percentage < percentage:
             user.ccc_progress[problem] = percentage
-            difficulty = CCC_PROBLEMS[problem]["difficulty"]
+            difficulty = ccc_difficulty(problem)
             total_exp = calc_exp.ccc_reward(difficulty)
             total_coins = calc_coins.ccc_reward(difficulty)
             exp_reward += new_reward(total_exp, old_percentage, percentage)
