@@ -71,7 +71,7 @@ def ccc_reward(difficulty):
     """ EXP rewarded when finishing CCC problems. """
     base = difficulty - 2
     scale = 1.1 ** (difficulty - 3)
-    return round(base * scale * 1000)
+    return round(base * scale * 3000)
 
 
 def chat_msg_reward(content):
