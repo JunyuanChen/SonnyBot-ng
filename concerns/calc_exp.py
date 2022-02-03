@@ -70,8 +70,8 @@ def recalc_level(level, exp, exp_change):
 def ccc_reward(difficulty):
     """ EXP rewarded when finishing CCC problems. """
     base = difficulty - 2
-    scale = 1.1 ** (difficulty - 3)
-    return round(base * scale * 3000)
+    scale = 1.15 ** (difficulty - 3)
+    return round(base * scale * 4000)
 
 
 def chat_msg_reward(content):
