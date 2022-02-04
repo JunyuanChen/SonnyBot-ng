@@ -107,6 +107,8 @@ class User:
     msg_count = field("msgCount")
     dmoj_username = field("dmojUsername")
     ccc_progress = field("cccProgress")
+    coin_booster = field("coinBooster")
+    exp_booster = field("expBooster")
 
     def save(self):
         self._snap = copy.deepcopy(self._data)
@@ -154,7 +156,9 @@ class User:
             "coins": 0,
             "msgCount": 0,
             "dmojUsername": None,
-            "cccProgress": {}
+            "cccProgress": {},
+            "coinBooster": 0,
+            "expBooster": 0
         })
 
         try:
