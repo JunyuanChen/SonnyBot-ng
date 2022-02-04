@@ -269,6 +269,69 @@ async def _changeMsgSent(
 
 
 @slash.slash(
+    name="giveCoinBooster",
+    description="Give the user Coin Booster (negative to remove)",
+    guild_ids=guild_id
+)
+async def _giveCoinBooster(
+        ctx: SlashContext,
+        member: discord.Member,
+        days: float
+):
+    with storage.LOCK:
+        try:
+            user = storage.User.load(member.id)
+            if user.coin_booster < time.time():
+                user.coin_booster = time.time()
+            user.coin_booster += days * 24 * 3600
+            user.save()
+            storage.commit(f"Give {days}-day Coin Booster to User {member.id}")
+            ndays = round((user.coin_booster - time.time()) / (24 * 3600), 3)
+            if ndays > 0:
+                reply = (f"<@{member.id}>, your coin booster is active and "
+                         f"will expire after {ndays} days! "
+                         "Go earn some coins!")
+            else:
+                reply = f"<@{member.id}>, your coin booster is now expired!"
+        except KeyError:
+            reply = f"User <@{member.id}> not found!"
+        except storage.StorageError as e:
+            reply = str(e)
+    await ctx.send(reply)
+
+
+@slash.slash(
+    name="giveExpBooster",
+    description="Give the user Exp Booster (negative to remove)",
+    guild_ids=guild_id
+)
+async def _giveExpBooster(
+        ctx: SlashContext,
+        member: discord.Member,
+        days: float
+):
+    with storage.LOCK:
+        try:
+            user = storage.User.load(member.id)
+            if user.exp_booster < time.time():
+                user.exp_booster = time.time()
+            user.exp_booster += days * 24 * 3600
+            user.save()
+            storage.commit(f"Give {days}-day Exp Booster to User {member.id}")
+            ndays = round((user.exp_booster - time.time()) / (24 * 3600), 3)
+            if ndays:
+                reply = (f"<@{member.id}>, your exp booster is active and "
+                         f"will expire after {ndays} days! Go earn some exp!")
+            else:
+                reply = f"<@{member.id}>, your exp booster is now expired!"
+        except KeyError:
+            reply = f"User <@{member.id}> not found!"
+        except storage.StorageError as e:
+            reply = str(e)
+    await ctx.send(reply)
+
+
+@slash.slash(
     name="purchaseCoinBooster",
     description="Purchase the 2-day 2x Coin Booster (Price: $75)",
     guild_ids=guild_id
