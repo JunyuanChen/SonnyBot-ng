@@ -85,17 +85,12 @@ async def change_exp_subtask(ctx, user, amount):
         await ctx.send(f"<@{user.id}> downgraded to Level "
                        f"{user.level}")
         return False
-
-    if amount > 0:
-        await ctx.send(f"<@{user.id}> gained {amount} exp!")
-    elif amount < 0:
-        await ctx.send(f"<@{user.id}> lost {amount} exp!")
     return None
 
 
 @slash.slash(
     name="redeploy",
-    description="Redeploy bot",
+    description="Redeploys the bot",
     guild_ids=guild_id
 )
 @require_admin
@@ -113,7 +108,7 @@ async def _redeploy(ctx: SlashContext):
 
 @slash.slash(
     name="stat",
-    description="Shows user stat",
+    description="Display user stat",
     guild_ids=guild_id
 )
 async def _stat(ctx: SlashContext, member: discord.Member = None):
@@ -143,7 +138,7 @@ async def _stat(ctx: SlashContext, member: discord.Member = None):
 
 @slash.slash(
     name="leaderboard",
-    description="Shows leaderboard",
+    description="Display the leaderboard",
     guild_ids=guild_id
 )
 async def _leaderboard(ctx: SlashContext):
@@ -169,7 +164,7 @@ async def _leaderboard(ctx: SlashContext):
 
 @slash.slash(
     name="removeUser",
-    description="Removes user from database",
+    description="Remove user from the database",
     guild_ids=guild_id
 )
 @require_admin
@@ -188,7 +183,7 @@ async def _removeUser(ctx: SlashContext, member: discord.Member):
 
 @slash.slash(
     name="changeEXP",
-    description="Changes user xp",
+    description="Change user's exp count",
     guild_ids=guild_id
 )
 @require_admin
@@ -212,7 +207,7 @@ async def _changeEXP(ctx: SlashContext, member: discord.Member, amount: int):
 
 @slash.slash(
     name="changeCoins",
-    description="Changes user coins",
+    description="Change user's coin balance",
     guild_ids=guild_id
 )
 @require_admin
@@ -236,7 +231,7 @@ async def _changeCoins(ctx: SlashContext, member: discord.Member, amount: int):
 
 @slash.slash(
     name="changeMsgSent",
-    description="Changes value of msg sent",
+    description="Changes number of messages sent",
     guild_ids=guild_id
 )
 @require_admin
@@ -266,7 +261,7 @@ async def _changeMsgSent(
 
 @slash.slash(
     name="giveCoinBooster",
-    description="Give the user Coin Booster (negative to remove)",
+    description="Give the user x2 Coin Booster (negative to remove time)",
     guild_ids=guild_id
 )
 async def _giveCoinBooster(
@@ -284,11 +279,10 @@ async def _giveCoinBooster(
             storage.commit(f"Give {days}-day Coin Booster to User {member.id}")
             ndays = round((user.coin_booster - time.time()) / (24 * 3600), 3)
             if ndays > 0:
-                reply = (f"<@{member.id}>, your coin booster is active and "
-                         f"will expire after {ndays} days! "
-                         "Go earn some coins!")
+                reply = (f"<@{member.id}>, your coin booster is now active, and"
+                         f"will expire after {ndays} days! ")
             else:
-                reply = f"<@{member.id}>, your coin booster is now expired!"
+                reply = f"<@{member.id}>, your coin booster has now expired!"
         except KeyError:
             reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
@@ -298,7 +292,7 @@ async def _giveCoinBooster(
 
 @slash.slash(
     name="giveExpBooster",
-    description="Give the user Exp Booster (negative to remove)",
+    description="Give the user x2 Exp Booster (negative to remove time)",
     guild_ids=guild_id
 )
 async def _giveExpBooster(
@@ -316,10 +310,10 @@ async def _giveExpBooster(
             storage.commit(f"Give {days}-day Exp Booster to User {member.id}")
             ndays = round((user.exp_booster - time.time()) / (24 * 3600), 3)
             if ndays:
-                reply = (f"<@{member.id}>, your exp booster is active and "
-                         f"will expire after {ndays} days! Go earn some exp!")
+                reply = (f"<@{member.id}>, your exp booster is now active and "
+                         f"will expire after {ndays} days!")
             else:
-                reply = f"<@{member.id}>, your exp booster is now expired!"
+                reply = f"<@{member.id}>, your exp booster has now expired!"
         except KeyError:
             reply = f"User <@{member.id}> not found!"
         except storage.StorageError as e:
@@ -329,7 +323,7 @@ async def _giveExpBooster(
 
 @slash.slash(
     name="purchaseCoinBooster",
-    description="Purchase the 2-day 2x Coin Booster (Price: $75)",
+    description="Purchase the x2 Coin Booster (Price: 75 coins)",
     guild_ids=guild_id
 )
 async def _purchaseCoinBooster(ctx: SlashContext):
@@ -358,7 +352,7 @@ async def _purchaseCoinBooster(ctx: SlashContext):
 
 @slash.slash(
     name="purchaseExpBooster",
-    description="Purchase the 2-day 2x Exp Booster (Price: $50)",
+    description="Purchase a x2 Exp Booster for 2-days (Price: 50 coins)",
     guild_ids=guild_id
 )
 async def _purchaseExpBooster(ctx: SlashContext):
@@ -387,7 +381,7 @@ async def _purchaseExpBooster(ctx: SlashContext):
 
 @slash.slash(
     name="showBoosters",
-    description="Show currently active boosters",
+    description="Shows the user's currently active boosters",
     guild_ids=guild_id
 )
 async def _showBoosters(ctx: SlashContext, member: discord.Member = None):
@@ -398,14 +392,14 @@ async def _showBoosters(ctx: SlashContext, member: discord.Member = None):
             coin = round((user.coin_booster - time.time()) / (24 * 3600), 3)
             exp = round((user.exp_booster - time.time()) / (24 * 3600), 3)
             if coin > 0:
-                coin_msg = f"your coin booster will expire in {coin} days"
+                coin_msg = f"Your **Coin Booster** will expire in {coin} days!"
             else:
-                coin_msg = "you have no coin booster"
+                coin_msg = "You have **no Coin Booster** currently active"
             if exp > 0:
-                exp_msg = f"your exp booster will expire in {exp} days"
+                exp_msg = f"Your **Exp Booster** will expire in {exp} days!"
             else:
-                exp_msg = "you have no exp booster"
-            reply = f"<@{member.id}>, {coin_msg} and {exp_msg}!"
+                exp_msg = "You have *no Exp Booster* currently active"
+            reply = f"<@{member.id}>: {coin_msg} | | {exp_msg}!"
         except KeyError:
             reply = f"User <@{member.id}> not found!"
     await ctx.send(reply)
@@ -413,7 +407,7 @@ async def _showBoosters(ctx: SlashContext, member: discord.Member = None):
 
 @slash.slash(
     name="transactCoins",
-    description="Transacts coins from user to user",
+    description="Transact coins from user to user",
     guild_ids=guild_id
 )
 async def _transactCoins(
@@ -441,7 +435,7 @@ async def _transactCoins(
                      f"{amount} coins to <@{receiver.id}>!")
         except AssertionError:
             if amount <= 0:
-                reply = f"<@{sender.id}>, amount must be positive!"
+                reply = f"<@{sender.id}>, transacted amount must be positive!"
             else:
                 reply = f"<@{sender.id}>, you don't have enough coins!"
         except KeyError:
@@ -453,7 +447,7 @@ async def _transactCoins(
 
 @slash.slash(
     name="gamble",
-    description="Gamble using 30 coins (max reward: 100 coins).",
+    description="Spend 10 coins and gamble for a chance at up to 100 coins payout!",
     guild_ids=guild_id
 )
 async def _gamble(ctx: SlashContext):
@@ -461,12 +455,12 @@ async def _gamble(ctx: SlashContext):
     with storage.LOCK:
         try:
             user = storage.User.load(member.id)
-            user.coins -= 30
+            user.coins -= 10
             assert user.coins >= 0
             coins = fun.gamble()
             user.coins += coins
             user.save()
-            storage.commit(f"Gamble: User {member.id}: -30 +{coins}")
+            storage.commit(f"Gamble: User {member.id}: -10 +{coins}")
             reply = f"<@{member.id}>, you received {coins} coins!"
         except AssertionError:
             reply = f"<@{member.id}>, you do not have enough coins!"
@@ -574,6 +568,8 @@ async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
             exp_reward, coin_reward = dmoj.update(user)
             exp_reward = calc_exp.with_booster(user, exp_reward)
             await change_exp_subtask(ctx, user, exp_reward)
+            if exp_reward:
+                await ctx.send(f"<@{member.id}> earned {coin_reward} exp points!")
             if coin_reward:
                 coin_reward = calc_coins.with_booster(user, coin_reward)
                 user.coins += coin_reward
@@ -581,7 +577,7 @@ async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
             user.save()
             storage.commit(f"Update CCC progress for User {member.id}",
                            no_error=True)
-            await ctx.send(f"<@{member.id}>, your CCC progress is updated!")
+            await ctx.send(f"<@{member.id}>, your CCC progress has been updated!")
         except KeyError:
             await ctx.send(f"User <@{member.id}> not found!")
         except dmoj.RequestException as e:
