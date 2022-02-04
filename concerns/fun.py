@@ -33,8 +33,8 @@ def gamble_curve(rand):
     ||                                 |
     +----------------------------------+
     """
-    base = 0.3 * rand ** 0.4
-    extra = 0.7 * rand ** 32
+    base = 0.1 * rand ** 0.15 #Original formula:  0.3 * rand ** 0.4
+    extra = 0.9 * rand ** 52  #Original formula:  0.7 * rand ** 32
     return base + extra
 
 
