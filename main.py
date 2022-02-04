@@ -85,13 +85,11 @@ async def change_exp_subtask(ctx, user, amount):
         await ctx.send(f"<@{user.id}> downgraded to Level "
                        f"{user.level}")
         return False
-  
+
     if amount > 0:
-        await ctx.send(f"<@{author.id}> gained {amount} exp!")
+        await ctx.send(f"<@{user.id}> gained {amount} exp!")
     elif amount < 0:
-        await ctx.send(f"<@{author.id}> lost {amount} exp!")
-    else:
-        await ctx.send(f"<@{author.id}> neither recieved or earned any exp because the admin who typed this command is a bafoon that wrote 0 for exp gained/lost.")
+        await ctx.send(f"<@{user.id}> lost {amount} exp!")
     return None
 
 
