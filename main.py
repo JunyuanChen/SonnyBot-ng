@@ -281,7 +281,7 @@ async def _purchaseCoinBooster(ctx: SlashContext):
             user.coin_booster += 2 * 24 * 3600
             user.save()
             storage.commit(f"Purchase Coin Booster for User {member.id}")
-            ndays = (user.coin_booster - time.time()) / (24 * 3600)
+            ndays = round((user.coin_booster - time.time()) / (24 * 3600), 3)
             reply = (f"<@{member.id}>, your coin booster is active and "
                      f"will expire after {ndays} days! Go earn some coins!")
         except AssertionError:
@@ -310,7 +310,7 @@ async def _purchaseExpBooster(ctx: SlashContext):
             user.exp_booster += 2 * 24 * 3600
             user.save()
             storage.commit(f"Purchase Exp Booster for User {member.id}")
-            ndays = (user.exp_booster - time.time()) / (24 * 3600)
+            ndays = round((user.exp_booster - time.time()) / (24 * 3600), 3)
             reply = (f"<@{member.id}>, your exp booster is active and "
                      f"will expire after {ndays} days! Go earn some exp!")
         except AssertionError:
