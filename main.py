@@ -343,7 +343,7 @@ async def _showBoosters(ctx: SlashContext, member: discord.Member = None):
             else:
                 coin_msg = "you have no coin booster"
             if exp > 0:
-                exp_msg = f"your coin booster will expire in {exp} days"
+                exp_msg = f"your exp booster will expire in {exp} days"
             else:
                 exp_msg = "you have no exp booster"
             reply = f"<@{member.id}>, {coin_msg} and {exp_msg}!"
