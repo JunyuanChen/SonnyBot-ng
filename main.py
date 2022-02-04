@@ -4,6 +4,7 @@
 #test commit
 
 import os
+import time
 
 import discord
 import discord.ext.commands
@@ -77,6 +78,7 @@ async def change_exp_subtask(ctx, user, amount):
         return
     if user.level > old_level:
         coins = calc_coins.level_up_reward(old_level, user.level)
+        coins = calc_coins.with_booster(user, coins)
         user.coins += coins
         await ctx.send(f"<@{user.id}> upgraded to Lvl. {user.level} "
                        f"and was rewarded {coins} coins!")
@@ -263,6 +265,64 @@ async def _changeMsgSent(
 
 
 @slash.slash(
+    name="purchaseCoinBooster",
+    description="Purchase the 2-day 2x Coin Booster (Price: $75)",
+    guild_ids=guild_id
+)
+async def _purchaseCoinBooster(ctx: SlashContext):
+    member = ctx.author
+    with storage.LOCK:
+        try:
+            user = storage.User.load(member.id)
+            user.coins -= 75
+            assert user.coins >= 0
+            if user.coin_booster < time.time():
+                user.coin_booster = time.time()
+            user.coin_booster += 2 * 24 * 3600
+            user.save()
+            storage.commit(f"Purchase Coin Booster for User {member.id}")
+            ndays = (user.coin_booster - time.time()) / (24 * 3600)
+            reply = (f"<@{member.id}>, your coin booster is active and "
+                     f"will expire after {ndays} days! Go earn some coins!")
+        except AssertionError:
+            reply = f"<@{member.id}>, you don't have enough coins!"
+        except KeyError:
+            reply = f"User <@{member.id}> not found!"
+        except storage.StorageError as e:
+            reply = str(e)
+    await ctx.send(reply)
+
+
+@slash.slash(
+    name="purchaseExpBooster",
+    description="Purchase the 2-day 2x Exp Booster (Price: $50)",
+    guild_ids=guild_id
+)
+async def _purchaseExpBooster(ctx: SlashContext):
+    member = ctx.author
+    with storage.LOCK:
+        try:
+            user = storage.User.load(member.id)
+            user.coins -= 50
+            assert user.coins >= 0
+            if user.exp_booster < time.time():
+                user.exp_booster = time.time()
+            user.exp_booster += 2 * 24 * 3600
+            user.save()
+            storage.commit(f"Purchase Exp Booster for User {member.id}")
+            ndays = (user.exp_booster - time.time()) / (24 * 3600)
+            reply = (f"<@{member.id}>, your exp booster is active and "
+                     f"will expire after {ndays} days! Go earn some exp!")
+        except AssertionError:
+            reply = f"<@{member.id}>, you don't have enough coins!"
+        except KeyError:
+            reply = f"User <@{member.id}> not found!"
+        except storage.StorageError as e:
+            reply = str(e)
+    await ctx.send(reply)
+
+
+@slash.slash(
     name="transactCoins",
     description="Transacts coins from user to user",
     guild_ids=guild_id
@@ -373,8 +433,10 @@ async def _connectDMOJAccount(ctx: SlashContext, username: str):
                 return
 
             exp_reward, coin_reward = rewards
+            exp_reward = calc_exp.with_booster(user, exp_reward)
             await change_exp_subtask(ctx, user, exp_reward)
             if coin_reward:
+                coin_reward = calc_coins.with_booster(user, coin_reward)
                 user.coins += coin_reward
                 await ctx.send(f"<@{author.id}> earned {coin_reward} coins!")
 
@@ -421,8 +483,10 @@ async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
         try:
             user = storage.User.load(member.id)
             exp_reward, coin_reward = dmoj.update(user)
+            exp_reward = calc_exp.with_booster(user, exp_reward)
             await change_exp_subtask(ctx, user, exp_reward)
             if coin_reward:
+                coin_reward = calc_coins.with_booster(user, coin_reward)
                 user.coins += coin_reward
                 await ctx.send(f"<@{member.id}> earned {coin_reward} coins!")
             user.save()
@@ -560,6 +624,7 @@ async def on_message(message: discord.Message):
     user = storage.User.load_or_create(message.author.id)
     user.msg_count += 1
     exp_reward = calc_exp.chat_msg_reward(message.content)
+    exp_reward = calc_exp.with_booster(user, exp_reward)
     upgraded = await change_exp_subtask(channel, user, exp_reward)
     user.save()
     # NOTE No commit here, because we do NOT want commits for every

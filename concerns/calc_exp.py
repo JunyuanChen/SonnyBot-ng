@@ -23,6 +23,7 @@ user for levelling up.  Adding them back to EXP gives total EXP.
 """
 
 import random
+import time
 
 
 def exp_requirement(level):
@@ -80,3 +81,10 @@ def chat_msg_reward(content):
     lower = num_words // 2
     upper = num_words + num_words // 2
     return random.randint(lower, upper)
+
+
+def with_booster(user, exp):
+    """ Apply booster (if active) to exp. """
+    if user.exp_booster > time.time():
+        exp *= 2
+    return exp
