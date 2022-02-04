@@ -80,16 +80,20 @@ async def change_exp_subtask(ctx, user, amount):
         coins = calc_coins.level_up_reward(old_level, user.level)
         coins = calc_coins.with_booster(user, coins)
         user.coins += coins
-        await ctx.send(f"<@{user.id}> upgraded to Lvl. {user.level} "
+        await ctx.send(f"<@{user.id}> upgraded to Level {user.level} "
                        f"and was rewarded {coins} coins!")
         return True
     if user.level < old_level:
-        coins = calc_coins.level_up_reward(user.level, old_level)
-        coins = min(coins, user.coins)
-        user.coins -= coins
-        await ctx.send(f"<@{user.id}> downgraded to Lvl. "
-                       f"{user.level} and lost {coins} coins!")
+        await ctx.send(f"<@{user.id}> downgraded to Level "
+                       f"{user.level}")
         return False
+  
+    if amount > 0:
+        await ctx.send(f"<@{author.id}> gained {amount} exp!")
+    elif amount < 0:
+        await ctx.send(f"<@{author.id}> lost {amount} exp!")
+    else:
+        await ctx.send(f"<@{author.id}> neither recieved or earned any exp because the admin who typed this command is a bafoon that wrote 0 for exp gained/lost.")
     return None
 
 
