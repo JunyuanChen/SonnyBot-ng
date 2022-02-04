@@ -327,6 +327,32 @@ async def _purchaseExpBooster(ctx: SlashContext):
 
 
 @slash.slash(
+    name="showBoosters",
+    description="Show currently active boosters",
+    guild_ids=guild_id
+)
+async def _showBoosters(ctx: SlashContext, member: discord.Member = None):
+    member = ctx.author if member is None else member
+    with storage.LOCK:
+        try:
+            user = storage.User.load(member.id)
+            coin = round((user.coin_booster - time.time()) / (24 * 3600), 3)
+            exp = round((user.exp_booster - time.time()) / (24 * 3600), 3)
+            if coin > 0:
+                coin_msg = f"your coin booster will expire in {coin} days"
+            else:
+                coin_msg = "you have no coin booster"
+            if exp > 0:
+                exp_msg = f"your coin booster will expire in {exp} days"
+            else:
+                exp_msg = "you have no exp booster"
+            reply = f"<@{member.id}>, {coin_msg} and {exp_msg}!"
+        except KeyError:
+            reply = f"User <@{member.id}> not found!"
+    await ctx.send(reply)
+
+
+@slash.slash(
     name="transactCoins",
     description="Transacts coins from user to user",
     guild_ids=guild_id
