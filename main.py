@@ -447,7 +447,8 @@ async def _transactCoins(
 
 @slash.slash(
     name="gamble",
-    description="Spend 10 coins and gamble for a chance at up to 100 coins payout!",
+    description=("Spend 10 coins and gamble for a chance "
+                 "at up to 100 coins payout!"),
     guild_ids=guild_id
 )
 async def _gamble(ctx: SlashContext):
@@ -460,7 +461,8 @@ async def _gamble(ctx: SlashContext):
             coins = fun.gamble()
             user.coins += coins
             user.save()
-            storage.commit(f"Gamble: User {member.id}: -10 +{coins}")
+            storage.commit(f"Gamble: User {member.id}: -10 +{coins}",
+                           no_error=True)
             reply = f"<@{member.id}>, you received {coins} coins!"
         except AssertionError:
             reply = f"<@{member.id}>, you do not have enough coins!"
