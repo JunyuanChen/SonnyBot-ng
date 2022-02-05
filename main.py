@@ -279,8 +279,8 @@ async def _giveCoinBooster(
             storage.commit(f"Give {days}-day Coin Booster to User {member.id}")
             ndays = round((user.coin_booster - time.time()) / (24 * 3600), 3)
             if ndays > 0:
-                reply = (f"<@{member.id}>, your coin booster is now active, and"
-                         f"will expire after {ndays} days! ")
+                reply = (f"<@{member.id}>, your coin booster is now active, "
+                         f"and will expire after {ndays} days!")
             else:
                 reply = f"<@{member.id}>, your coin booster has now expired!"
         except KeyError:
@@ -316,6 +316,46 @@ async def _giveExpBooster(
                 reply = f"<@{member.id}>, your exp booster has now expired!"
         except KeyError:
             reply = f"User <@{member.id}> not found!"
+        except storage.StorageError as e:
+            reply = str(e)
+    await ctx.send(reply)
+
+
+@slash.slash(
+    name="giveAllCoinBooster",
+    description="Give everybody x2 Coin Booster (negative to remove time)",
+    guild_ids=guild_id
+)
+async def _giveAllCoinBooster(ctx: SlashContext, days: float):
+    with storage.LOCK:
+        try:
+            for user in storage.User.all():
+                if user.coin_booster < time.time():
+                    user.coin_booster = time.time()
+                user.coin_booster += days * 24 * 3600
+                user.save()
+            storage.commit(f"Give {days}-day Coin Booster to everybody")
+            reply = f"Everybody now have a {days}-day coin booster!"
+        except storage.StorageError as e:
+            reply = str(e)
+    await ctx.send(reply)
+
+
+@slash.slash(
+    name="giveAllExpBooster",
+    description="Give everybody x2 Exp Booster (negative to remove time)",
+    guild_ids=guild_id
+)
+async def _giveAllExpBooster(ctx: SlashContext, days: float):
+    with storage.LOCK:
+        try:
+            for user in storage.User.all():
+                if user.exp_booster < time.time():
+                    user.exp_booster = time.time()
+                user.exp_booster += days * 24 * 3600
+                user.save()
+            storage.commit(f"Give {days}-day Exp Booster to everybody")
+            reply = f"Everybody now have a {days}-day exp booster!"
         except storage.StorageError as e:
             reply = str(e)
     await ctx.send(reply)
