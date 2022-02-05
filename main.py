@@ -323,7 +323,7 @@ async def _giveExpBooster(
 
 @slash.slash(
     name="purchaseCoinBooster",
-    description="Purchase the x2 Coin Booster (Price: 75 coins)",
+    description="Purchase a x2 Coin Booster for 2 days (Price: 75 coins)",
     guild_ids=guild_id
 )
 async def _purchaseCoinBooster(ctx: SlashContext):
