@@ -35,6 +35,27 @@ class ConsoleLogger:
             print(msg)
 
 
+class FileLogger:
+    def __init__(self, filename):
+        self._filename = filename
+
+    def debug(self, message):
+        with open(self._filename, "a", encodind="utf-8") as f:
+            f.write(f"{time.time()} [DEBUG] {message}\n")
+
+    def info(self, message):
+        with open(self._filename, "a", encodind="utf-8") as f:
+            f.write(f"{time.time()} [INFO] {message}\n")
+
+    def warn(self, message):
+        with open(self._filename, "a", encodind="utf-8") as f:
+            f.write(f"{time.time()} [WARN] {message}\n")
+
+    def error(self, message):
+        with open(self._filename, "a", encodind="utf-8") as f:
+            f.write(f"{time.time()} [ERROR] {message}\n")
+
+
 def debug(message):
     for logger in LOGGERS:
         logger.debug(message)

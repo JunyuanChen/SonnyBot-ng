@@ -28,7 +28,8 @@ timer.sync_to_remote()
 
 
 logger.LOGGERS = [
-    logger.ConsoleLogger()
+    logger.ConsoleLogger(),
+    logger.FileLogger("sonnybot.log")
 ]
 
 
