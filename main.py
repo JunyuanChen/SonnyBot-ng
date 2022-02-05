@@ -528,30 +528,24 @@ async def _votingemotes(ctx: SlashContext, start: int, end: int):
   if start < 0: start = 1
   if end > 10: end = 10
   if end < 0: end = 1
-    
+  
   emotes = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
-  channel = ctx.message.channel
-  pastMessages = await channel.history(limit = 20).flatten()
+  channel = ctx.channel
+  pastMessages = await channel.history(limit = 5).flatten()
+  msg = pastMessages[0] #get the last sent message from the user
 
-  #Get Most Recent Message From User#
-  for i in range(1, 21):
-    if pastMessages[i].author.id == ctx.message.author.id:
-      msg = pastMessages[i]
-      break
-  
-  #Make Sure Starting Value <= Ending Value#
-  if start <= end:
-    await ctx.message.delete()
-  
-    #Add All Number Count Emojis#
+  await ctx.send("Adding emotes...")
+  if start <= end:  
     for i in range(start, end + 1):
       emoji = emotes[i - 1]
       await msg.add_reaction(emoji)
+    await ctx.send("Emotes added successfully!")
   else:
-    message = await ctx.send(f"<@{ctx.message.author.id}>, please make sure the start value is lower or equal to the end value!")
-    await asyncio.sleep(3)
-    await message.delete() #delete bot message
-    await ctx.message.delete() #delete user failed command
+    print()
+    await ctx.send(f"<@{ctx.author.id}>, please make sure the start value is lower or equal to the end value!")
+
+  await asyncio.sleep(3)
+  await channel.purge(limit = 2)
     
     
 @slash.slash(
