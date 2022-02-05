@@ -41,7 +41,7 @@ bot = discord.ext.commands.Bot(
 
 
 slash = SlashCommand(bot, sync_commands=True)
-guild_id = [762065730191228929]
+guild_id = None
 
 require_admin = discord.ext.commands.has_permissions(administrator=True)
 
