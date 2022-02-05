@@ -40,19 +40,19 @@ class FileLogger:
         self._filename = filename
 
     def debug(self, message):
-        with open(self._filename, "a", encodind="utf-8") as f:
+        with open(self._filename, "a", encoding="utf-8") as f:
             f.write(f"{time.time()} [DEBUG] {message}\n")
 
     def info(self, message):
-        with open(self._filename, "a", encodind="utf-8") as f:
+        with open(self._filename, "a", encoding="utf-8") as f:
             f.write(f"{time.time()} [INFO] {message}\n")
 
     def warn(self, message):
-        with open(self._filename, "a", encodind="utf-8") as f:
+        with open(self._filename, "a", encoding="utf-8") as f:
             f.write(f"{time.time()} [WARN] {message}\n")
 
     def error(self, message):
-        with open(self._filename, "a", encodind="utf-8") as f:
+        with open(self._filename, "a", encoding="utf-8") as f:
             f.write(f"{time.time()} [ERROR] {message}\n")
 
 
