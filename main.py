@@ -544,7 +544,7 @@ async def _votingemotes(ctx: SlashContext, start: int, end: int):
     print()
     await ctx.send(f"<@{ctx.author.id}>, please make sure the start value is lower or equal to the end value!")
 
-  await asyncio.sleep(3)
+  await asyncio.sleep(2)
   await channel.purge(limit = 2)
     
     
