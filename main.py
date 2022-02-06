@@ -646,7 +646,7 @@ async def _fetchCCCProgress(ctx: SlashContext, member: discord.Member = None):
             exp_reward = calc_exp.with_booster(user, exp_reward)
             await change_exp_subtask(ctx, user, exp_reward)
             if exp_reward:
-                await ctx.send(f"<@{member.id}> earned {coin_reward} exp points!")
+                await ctx.send(f"<@{member.id}> earned {exp_reward} exp points!")
             if coin_reward:
                 coin_reward = calc_coins.with_booster(user, coin_reward)
                 user.coins += coin_reward
