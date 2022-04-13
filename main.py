@@ -266,6 +266,7 @@ async def _changeMsgSent(
     description="Give the user x2 Coin Booster (negative to remove time)",
     guild_ids=guild_id
 )
+@require_admin
 async def _giveCoinBooster(
         ctx: SlashContext,
         member: discord.Member,
@@ -297,6 +298,7 @@ async def _giveCoinBooster(
     description="Give the user x2 Exp Booster (negative to remove time)",
     guild_ids=guild_id
 )
+@require_admin
 async def _giveExpBooster(
         ctx: SlashContext,
         member: discord.Member,
@@ -328,6 +330,7 @@ async def _giveExpBooster(
     description="Give everybody x2 Coin Booster (negative to remove time)",
     guild_ids=guild_id
 )
+@require_admin
 async def _giveAllCoinBooster(ctx: SlashContext, days: float):
     with storage.LOCK:
         try:
@@ -348,6 +351,7 @@ async def _giveAllCoinBooster(ctx: SlashContext, days: float):
     description="Give everybody x2 Exp Booster (negative to remove time)",
     guild_ids=guild_id
 )
+@require_admin
 async def _giveAllExpBooster(ctx: SlashContext, days: float):
     with storage.LOCK:
         try:
